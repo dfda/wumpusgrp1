@@ -7,6 +7,8 @@ Alesson Renato Lopes Valenca (alessonrenato@gmail.com)
 
 Hericles Gabriel Escoteiro e Silva (hhericles@hotmail.com)
 
+Rafael de Souza Pereira (rafaeldesouza51@hotmail.com)
+
 Wagner Lucas Ferreira da Silva (wagner46@live.com)
 
 ## Objetivo:

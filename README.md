@@ -5,7 +5,7 @@ Jogo Wumpus em Prolog
 
 Alesson Renato Lopes Valenca (alessonrenato@gmail.com)
 
-Hericles Gabriel Escoteiro e Silva (hhericles@hotmail.com)
+Cassia Regina Franca Barbosa (caassiaregina@live.com)
 
 Rafael de Souza Pereira (rafaeldesouza51@hotmail.com)
 

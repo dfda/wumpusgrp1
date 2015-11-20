@@ -34,7 +34,8 @@
 :- load_files([wumpus1]).
 
 init_agent :- % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
-	writeln('Agente iniciando...'). % apague esse writeln e coloque aqui as acoes para iniciar o agente
+	writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente
+    assert(estou_sentindo_uma_treta([yes,_,_,no,no], shoot)).
 
 % esta funcao permanece a mesma. Nao altere.
 restart_agent :- 

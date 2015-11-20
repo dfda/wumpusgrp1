@@ -49,5 +49,9 @@ run_agent(Percepcao, Acao) :-
     write('O valor da flecha: '), 
     writeln(Flecha),
     estou_sentindo_uma_treta(Percepcao, Acao).
+    % ouro_na_lapa(Percepcao, Acao). /* tentativa de fazer o agente pegar o ouro */
+
+
 % Fatos (reacoes que vao ser executadas)
-    estouu_sentindo_uma_treta([no,no,no,yes,no], turnleft).
+estou_sentindo_uma_treta([no,no,no,yes,no], turnleft).
+

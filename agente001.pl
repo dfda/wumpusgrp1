@@ -44,9 +44,8 @@ restart_agent :-
 % Funcao recebe Percepcao, uma lista conforme descrito acima.
 % Deve retornar uma Acao, dentre as acoes validas descritas acima.
 run_agent(Percepcao, Acao) :-
-    write('percebi: '), % pode apagar isso se desejar. Imprima somente o necessario.
-  writeln(Percepcao),% apague para limpar a saida. Coloque aqui seu codigo.
-  write('O valor da flecha: '), 
-  writeln(Flecha),
-  
+    write('percebi: '), 
+    writeln(Percepcao),
+    write('O valor da flecha: '), 
+    writeln(Flecha). 
 

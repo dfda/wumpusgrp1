@@ -47,5 +47,7 @@ run_agent(Percepcao, Acao) :-
     write('percebi: '), 
     writeln(Percepcao),
     write('O valor da flecha: '), 
-    writeln(Flecha). 
-
+    writeln(Flecha),
+    estou_sentindo_uma_treta(Percepcao, Acao).
+% Fatos (reacoes que vao ser executadas)
+    estouu_sentindo_uma_treta([no,no,no,yes,no], turnleft).

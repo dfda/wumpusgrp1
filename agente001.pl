@@ -55,7 +55,7 @@ run_agent(Percepcao, Acao) :-
 
 
 % Fatos (reacoes que vao ser executadas)
-estou_sentindo_uma_treta([no,no,no,yes,no], turnleft).
-estou_sentindo_uma_treta([_,_,no,no,_], goforward).
-estou_sentindo_uma_treta([yes,_,_,no,no], shoot).
-estou_sentindo_uma_treta([_,_,yes,_,_],  grab).
+estou_sentindo_uma_treta([_,_,no,yes,no], turnleft). %fazer agente virar para esquerda ao sentir trombada%
+estou_sentindo_uma_treta([_,_,no,no,_], goforward). %agente segue em frente caso nao haja ouro e nao sinta trombada%
+estou_sentindo_uma_treta([yes,_,_,no,no], shoot). %agente atira ao sentir fedor do wumpus%
+estou_sentindo_uma_treta([_,_,yes,_,_],  grab). %agente coleta ouro ao perceber seu brilho%

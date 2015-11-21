@@ -31,7 +31,8 @@
 % e faca a consulta (query) na forma:
 % ?- start.
 
-:- load_files([wumpus1]).
+:- load_files([wumpus3]).
+wumpusworld(pit3, 4).
 
 init_agent :- % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
 	writeln('Agente iniciando...'). % apague esse writeln e coloque aqui as acoes para iniciar o agente
@@ -56,6 +57,6 @@ run_agent(Percepcao, Acao) :-
 
 % Fatos (reacoes que vao ser executadas)
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft). %fazer agente virar para esquerda ao sentir trombada%
-estou_sentindo_uma_treta([_,_,no,no,_], goforward). %agente segue em frente caso nao haja ouro e nao sinta trombada%
 estou_sentindo_uma_treta([yes,_,_,no,no], shoot). %agente atira ao sentir fedor do wumpus%
+estou_sentindo_uma_treta([_,_,no,no,_], goforward). %agente segue em frente caso nao haja ouro e nao sinta trombada%
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab). %agente coleta ouro ao perceber seu brilho%

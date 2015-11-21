@@ -34,8 +34,8 @@
 :- load_files([wumpus1]).
 
 init_agent :- % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
-	writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente
-    assert(estou_sentindo_uma_treta([yes,_,_,no,no], shoot)).
+	writeln('Agente iniciando...'). % apague esse writeln e coloque aqui as acoes para iniciar o agente
+%  assert(estou_sentindo_uma_tretia([yes,_,_,no,no], shoot)).
 
 % esta funcao permanece a mesma. Nao altere.
 restart_agent :- 
@@ -47,7 +47,8 @@ restart_agent :-
 run_agent(Percepcao, Acao) :-
     write('percebi: '), 
     writeln(Percepcao),
-    write('O valor da flecha: '), 
+    agent_arrows(Flecha),
+    write('Numero de flechas: '), 
     writeln(Flecha),
     estou_sentindo_uma_treta(Percepcao, Acao).
     % ouro_na_lapa(Percepcao, Acao). /* tentativa de fazer o agente pegar o ouro */
@@ -56,3 +57,5 @@ run_agent(Percepcao, Acao) :-
 % Fatos (reacoes que vao ser executadas)
 estou_sentindo_uma_treta([no,no,no,yes,no], turnleft).
 estou_sentindo_uma_treta([_,_,no,no,_], goforward).
+estou_sentindo_uma_treta([yes,_,_,no,no], shoot).
+

@@ -58,4 +58,4 @@ run_agent(Percepcao, Acao) :-
 estou_sentindo_uma_treta([no,no,no,yes,no], turnleft).
 estou_sentindo_uma_treta([_,_,no,no,_], goforward).
 estou_sentindo_uma_treta([yes,_,_,no,no], shoot).
-
+estou_sentindo_uma_treta([_,_,yes,_,_],  grab).

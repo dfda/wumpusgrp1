@@ -34,10 +34,13 @@
 :- load_files([wumpus3]).
 wumpusworld(pit3, 4).
 
+:- dynamic ([agent_flecha/1,]). %fatos dinamicos
+
 init_agent :- % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
 	writeln('Agente iniciando...'). % apague esse writeln e coloque aqui as acoes para iniciar o agente
 %  assert(estou_sentindo_uma_tretia([yes,_,_,no,no], shoot)).
-
+    retractall(agent_flecha(_)).
+    assert(agent_flecha(1)),
 % esta funcao permanece a mesma. Nao altere.
 restart_agent :- 
 	init_agent.
@@ -48,15 +51,17 @@ restart_agent :-
 run_agent(Percepcao, Acao) :-
     write('percebi: '), 
     writeln(Percepcao),
-    agent_arrows(Flecha),
-    write('Numero de flechas: '), 
+    write('Flechas: '),
     writeln(Flecha),
+    %agent_arrows(Flecha),
+    %write('Numero de flechas: '), 
+    %writeln(Flecha),
     estou_sentindo_uma_treta(Percepcao, Acao).
     % ouro_na_lapa(Percepcao, Acao). /* tentativa de fazer o agente pegar o ouro */
-
 
 % Fatos (reacoes que vao ser executadas)
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft). %fazer agente virar para esquerda ao sentir trombada%
 estou_sentindo_uma_treta([yes,_,_,no,no], shoot). %agente atira ao sentir fedor do wumpus%
 estou_sentindo_uma_treta([_,_,no,no,_], goforward). %agente segue em frente caso nao haja ouro e nao sinta trombada%
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab). %agente coleta ouro ao perceber seu brilho%
+

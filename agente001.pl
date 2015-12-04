@@ -34,12 +34,14 @@
 :- load_files([wumpus3]).
 wumpusworld(pit3, 4).
 
-:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1]). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1]). %fatos dinamicos
 
 init_agent :-                       % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
 	writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente
     retractall(minhacasa(_)),
     assert(minhacasa([1,1])),       % casa inicial
+    retractall(orientacao(_)),
+    assert(orientacao(0)),
     retractall(agent_flecha(_)),
     assert(agent_flecha(1)),
     retractall(wumpus(_)),
@@ -60,6 +62,9 @@ run_agent(Percepcao, Acao) :-
     minhacasa(Posicao),
     write('Minha posicao: '),
     writeln(Posicao),
+    orientacao(Sentido),
+    write('Sentido do agente: '),
+    writeln(Sentido),
     estou_sentindo_uma_treta(Percepcao, Acao).
     % ouro_na_lapa(Percepcao, Acao). /* tentativa de fazer o agente pegar o ouro */
 
@@ -67,7 +72,8 @@ run_agent(Percepcao, Acao) :-
 estou_sentindo_uma_treta([_,_,_,_,yes]):-
     retractall(wumpus(_)), 
     assert(wumpus(dead)).
-estou_sentindo_uma_treta([_,_,no,yes,no], turnleft). %fazer agente virar para esquerda ao sentir trombada%
+estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
+    novosentido.
 estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :- 
     agent_flecha(X), 
     X==1, 
@@ -81,4 +87,9 @@ tiro :-
     X1 is X - 1,
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
+novosentido :-   
+    orientacao(S),
+    S1 is S+90,
+    retractall(orientacao(_)),
+    assert(orientacao(S1)).
 

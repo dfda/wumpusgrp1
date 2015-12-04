@@ -32,9 +32,9 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-wumpusworld(pit3, 4).
-
 :- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1]). %fatos dinamicos
+
+wumpusworld(pit3, 4).
 
 init_agent :-                       % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
 	writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente

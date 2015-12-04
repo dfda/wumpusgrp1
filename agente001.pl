@@ -79,7 +79,8 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-
     X==1, 
     wumpus(alive), 
     tiro. %agente atira ao sentir fedor do wumpus%
-estou_sentindo_uma_treta([_,_,no,no,_], goforward). %agente segue em frente caso nao haja ouro e nao sinta trombada%
+estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
+    novaposicao.
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab). %agente coleta ouro ao perceber seu brilho%
 tiro :- 
     agent_flecha(X),
@@ -92,4 +93,12 @@ novosentido :-
     S1 is (S+90) mod 360,
     retractall(orientacao(_)),
     assert(orientacao(S1)).
+novaposicao :-
+    minhacasa([H|T]),
+    orientacao(O),
+    O==0,
+    H1 is H+1,  %Necessario validar a posicao
+    H1 < 5,
+    retractall(minhacasa(_)),
+    assert(minhacasa([H1|T])).
 

@@ -34,10 +34,12 @@
 :- load_files([wumpus3]).
 wumpusworld(pit3, 4).
 
-:- dynamic ([agent_flecha/1, wumpus/1]). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1]). %fatos dinamicos
 
 init_agent :-                       % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
 	writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente
+    retractall(minhacasa(_)),
+    assert(minhacasa([1,1])),       % casa inicial
     retractall(agent_flecha(_)),
     assert(agent_flecha(1)),
     retractall(wumpus(_)),
@@ -55,6 +57,9 @@ run_agent(Percepcao, Acao) :-
     agent_flecha(Flecha),nl,
     write('Numero de flechas: '), 
     writeln(Flecha),
+    minhacasa(Posicao),
+    write('Minha posicao: '),
+    writeln(Posicao),
     estou_sentindo_uma_treta(Percepcao, Acao).
     % ouro_na_lapa(Percepcao, Acao). /* tentativa de fazer o agente pegar o ouro */
 

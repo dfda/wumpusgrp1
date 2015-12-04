@@ -89,7 +89,7 @@ tiro :-
     assert(agent_flecha(X1)).
 novosentido :-   
     orientacao(S),
-    S1 is S+90,
+    S1 is (S+90) mod 360,
     retractall(orientacao(_)),
     assert(orientacao(S1)).
 

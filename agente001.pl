@@ -52,9 +52,9 @@ restart_agent :-
 run_agent(Percepcao, Acao) :-
     write('percebi: '), 
     writeln(Percepcao),
-    %agent_arrows(Flecha),
-    %write('Numero de flechas: '), 
-    %writeln(Flecha),
+    agent_flecha(Flecha),
+    write('Numero de flechas: '), 
+    writeln(Flecha),
     estou_sentindo_uma_treta(Percepcao, Acao).
     % ouro_na_lapa(Percepcao, Acao). /* tentativa de fazer o agente pegar o ouro */
 

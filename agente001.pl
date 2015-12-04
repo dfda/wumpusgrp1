@@ -34,9 +34,9 @@
 :- load_files([wumpus3]).
 wumpusworld(pit3, 4).
 
-:- dynamic ([agent_flecha/1], [wumpus/1]). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1]). %fatos dinamicos
 
-init_agent :- % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
+init_agent :-                       % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
 	writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente
     retractall(agent_flecha(_)),
     assert(agent_flecha(1)),
@@ -50,9 +50,9 @@ restart_agent :-
 % Funcao recebe Percepcao, uma lista conforme descrito acima.
 % Deve retornar uma Acao, dentre as acoes validas descritas acima.
 run_agent(Percepcao, Acao) :-
-    write('percebi: '), 
+    write('Percebi: '), 
     writeln(Percepcao),
-    agent_flecha(Flecha),
+    agent_flecha(Flecha),nl,
     write('Numero de flechas: '), 
     writeln(Flecha),
     estou_sentindo_uma_treta(Percepcao, Acao).

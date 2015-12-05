@@ -73,7 +73,8 @@ estou_sentindo_uma_treta([_,_,_,_,yes]):-
     retractall(wumpus(_)), 
     assert(wumpus(dead)).
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-    novosentido.
+    novosentido,
+    novaposicao.
 estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :- 
     agent_flecha(X), 
     X==1, 
@@ -94,11 +95,17 @@ novosentido :-
     retractall(orientacao(_)),
     assert(orientacao(S1)).
 novaposicao :-
-    minhacasa([H|T]),
+    minhacasa([X,Y]),
     orientacao(O),
     O==0,
-    H1 is H+1,  %Necessario validar a posicao
-    H1 < 5,
-    retractall(minhacasa(_)),
-    assert(minhacasa([H1|T])).
+    X1 is X+1,  %Necessario validar a posicao
+    retractall(minhacasa([_,_])),
+    assert(minhacasa([X1,Y])).
+novaposicao :-
+    minhacasa([X,Y]),
+    orientacao(O),
+    O==90,
+    Y1 is Y+1, %Necessario validar e limitar posicao de Y ate 4
+    retractall(minhacasa([_,_])),
+    assert(minhacasa([X,Y1])).
 

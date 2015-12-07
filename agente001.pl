@@ -75,6 +75,7 @@ estou_sentindo_uma_treta([_,_,_,_,yes]):-
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
     novosentido,
     novaposicao.
+estou_sentindo_uma_treta([yes,_,_,_,yes], goforward). %agente segue em frente depois de ouvir grito, mesmo sentindo fedor
 estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :- 
     agent_flecha(X), 
     X==1, 

@@ -109,3 +109,7 @@ novaposicao :-
     retractall(minhacasa([_,_])),
     assert(minhacasa([X,Y1])).
 
+%para recolhimento de listas
+membro(X,[X|_]).
+membro(X, [_|Y]):-
+    membro(X,Y).

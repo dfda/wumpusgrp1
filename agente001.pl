@@ -100,14 +100,14 @@ novaposicao :-
     orientacao(O),
     O==0,
     X1 is X+1,  %Necessario validar a posicao
-    retractall(minhacasa([_,_])),
+    retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao :-
     minhacasa([X,Y]),
     orientacao(O),
     O==90,
     Y1 is Y+1, %Necessario validar e limitar posicao de Y ate 4
-    retractall(minhacasa([_,_])),
+    retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
 
 %para recolhimento de listas

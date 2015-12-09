@@ -37,7 +37,7 @@
 wumpusworld(pit3, 4).
 
 init_agent :-                       % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
-	writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente
+    writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente
     retractall(minhacasa(_)),
     assert(minhacasa([1,1])),       % casa inicial
     retractall(orientacao(_)),
@@ -48,7 +48,7 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     assert(wumpus(alive)).
 % esta funcao permanece a mesma. Nao altere.
 restart_agent :- 
-	init_agent.
+    init_agent.
 
 % esta e a funcao chamada pelo simulador. Nao altere a "cabeca" da funcao. Apenas o corpo.
 % Funcao recebe Percepcao, uma lista conforme descrito acima.
@@ -122,7 +122,17 @@ membro(X,[X|_]).
 membro(X, [_|Y]):-
     membro(X,Y).
 
-% Posicoes adjacentes
+% Casas adjacentes
 minhacasa([H, T]):-
     adjacentes([H, T], L).
+
+adjacentes([H, T], L):-
+    cima([H, T], L1),
+    baixo([H, T], L2),
+    esqueda([H, T], L3),
+    direita([H, T], L4),
+    L=[L1, L2, L3, L4],
+    write('Adjacentes: '),
+    writeln(L).
+
 

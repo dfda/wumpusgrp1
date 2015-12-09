@@ -66,28 +66,35 @@ run_agent(Percepcao, Acao) :-
     write('Sentido do agente: '),
     writeln(Sentido),
     estou_sentindo_uma_treta(Percepcao, Acao).
-    % ouro_na_lapa(Percepcao, Acao). /* tentativa de fazer o agente pegar o ouro */
 
-% Fatos (reacoes que vao ser executadas)
+% Fatos (acoes que vao ser executadas)
 estou_sentindo_uma_treta([_,_,_,_,yes]):-
     retractall(wumpus(_)), 
     assert(wumpus(dead)).
+
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
     novosentido,
     novaposicao.
-estou_sentindo_uma_treta([yes,_,_,_,yes], goforward). %agente segue em frente depois de ouvir grito, mesmo sentindo fedor
+
+%estou_sentindo_uma_treta([yes,_,_,_,yes], goforward). %agente segue em frente depois de ouvir grito, mesmo sentindo fedor
+
 estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :- 
     agent_flecha(X), 
     X==1, 
     wumpus(alive), 
     tiro. %agente atira ao sentir fedor do wumpus%
+
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     novaposicao.
+
+%estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
+
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab). %agente coleta ouro ao perceber seu brilho%
+
 tiro :- 
     agent_flecha(X),
     X>0,
-    X1 is X - 1,
+    X1 is X-1,
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
 novosentido :-   
@@ -97,14 +104,14 @@ novosentido :-
     assert(orientacao(S1)).
 novaposicao :-
     minhacasa([X,Y]),
-    orientacao(O),
+    orientacao(O),    
     O==0,
     X1 is X+1,  %Necessario validar a posicao
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao :-
     minhacasa([X,Y]),
-    orientacao(O),
+    orientacao(O),    
     O==90,
     Y1 is Y+1, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
@@ -114,3 +121,8 @@ novaposicao :-
 membro(X,[X|_]).
 membro(X, [_|Y]):-
     membro(X,Y).
+
+% Posicoes adjacentes
+minhacasa([H, T]):-
+    adjacentes([H, T], L).
+

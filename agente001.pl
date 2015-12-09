@@ -99,7 +99,7 @@ tiro :-
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
 
-novosentido(O):-
+novosentido(O):- 
     orientacao(S),
     O is (S+90) mod 360,
     retractall(orientacao(_)),
@@ -115,7 +115,11 @@ novaposicao(90) :-
     Y1 is Y+1, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
-
+novaposicao(180) :-
+    minhacasa([X,Y]),
+    X1 is X-1, %Necessario validar e limitar posicao de Y ate 4
+    retractall(minhacasa([_|_])),
+    assert(minhacasa([X,Y1])).
 %para recolhimento de listas
 membro(X,[X|_]).
 membro(X, [_|Y]):-

@@ -73,8 +73,8 @@ estou_sentindo_uma_treta([_,_,_,_,yes]):-
     assert(wumpus(dead)).
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-    novosentido,
-    novaposicao.
+    novosentido(O),
+    novaposicao(O).
 
 %estou_sentindo_uma_treta([yes,_,_,_,yes], goforward). %agente segue em frente depois de ouvir grito, mesmo sentindo fedor
 
@@ -85,7 +85,8 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-
     tiro. %agente atira ao sentir fedor do wumpus%
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
-    novaposicao.
+    orientacao(O),
+    novaposicao(O).
 
 %estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
 
@@ -97,22 +98,20 @@ tiro :-
     X1 is X-1,
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
-novosentido :-   
+
+novosentido(O):-
     orientacao(S),
-    S1 is (S+90) mod 360,
+    O is (S+90) mod 360,
     retractall(orientacao(_)),
-    assert(orientacao(S1)).
-novaposicao :-
+    assert(orientacao(O)).
+
+novaposicao(0) :-
     minhacasa([X,Y]),
-    orientacao(O),    
-    O==0,
     X1 is X+1,  %Necessario validar a posicao
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
-novaposicao :-
+novaposicao(90) :-
     minhacasa([X,Y]),
-    orientacao(O),    
-    O==90,
     Y1 is Y+1, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).

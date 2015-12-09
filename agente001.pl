@@ -143,4 +143,10 @@ cima([H, T], L1):-
 baixo([H, T], L2):-
     not(H==1),
     H2 is H-1,
-    L2=[H2,T].
+    L2=[H2, T].
+
+esqueda([H, T], L3):-
+    not(T==1),
+    T1 is T-1,
+    L3=[H, T1].
+

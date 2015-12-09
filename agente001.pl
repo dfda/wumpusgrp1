@@ -73,8 +73,8 @@ estou_sentindo_uma_treta([_,_,_,_,yes]):-
     assert(wumpus(dead)).
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-    novosentidoleft(O),
-    novaposicao(O).
+    orientacao(O),
+    novosentidoleft(O).
 
 %estou_sentindo_uma_treta([yes,_,_,_,yes], goforward). %agente segue em frente depois de ouvir grito, mesmo sentindo fedor
 
@@ -124,7 +124,7 @@ novaposicao(180) :-
     minhacasa([X,Y]),
     X1 is X-1, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
-    assert(minhacasa([X,Y1])).
+    assert(minhacasa([X1,Y])).
 novaposicao(270) :-
     minhacasa([X,Y]),
     Y1 is Y-1, %Necessario validar e limitar posicao de Y ate 4

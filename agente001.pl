@@ -126,6 +126,7 @@ membro(X, [_|Y]):-
 minhacasa([H, T]):-
     adjacentes([H, T], L).
 
+% A regra chamara outras regrar para somar e diminuir cara coordenada
 adjacentes([H, T], L):-
     cima([H, T], L1),
     baixo([H, T], L2),
@@ -136,22 +137,19 @@ adjacentes([H, T], L):-
     writeln(L).
 
 cima([H, T], L1):-
-    not(H==4),
     H1 is H+1,
     L1=[H1, T].
 
+
 baixo([H, T], L2):-
-    not(H==1),
     H2 is H-1,
     L2=[H2, T].
 
 esqueda([H, T], L3):-
-    not(T==1),
     T1 is T-1,
     L3=[H, T1].
 
 direita([H, T], L4):-
-    not(T==4),
     T2 is T+1,
     L4=[H, T2].
 

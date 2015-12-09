@@ -73,7 +73,7 @@ estou_sentindo_uma_treta([_,_,_,_,yes]):-
     assert(wumpus(dead)).
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-    novosentido(O),
+    novosentidoleft(O),
     novaposicao(O).
 
 %estou_sentindo_uma_treta([yes,_,_,_,yes], goforward). %agente segue em frente depois de ouvir grito, mesmo sentindo fedor
@@ -99,9 +99,14 @@ tiro :-
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
 
-novosentido(O):- %muda a memoria do sentido atual caso aconteca um turnleft
+novosentidoleft(O):- %muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(S),
     O is (S+90) mod 360,
+    retractall(orientacao(_)),
+    assert(orientacao(O)).
+novosentidoright(O):- %muda a memoria do sentido atual caso aconteca um turnright
+    orientacao(S),
+    O is (S-90) mod 360,
     retractall(orientacao(_)),
     assert(orientacao(O)).
 

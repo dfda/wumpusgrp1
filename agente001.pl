@@ -150,3 +150,8 @@ esqueda([H, T], L3):-
     T1 is T-1,
     L3=[H, T1].
 
+direita([H, T], L4):-
+    not(T==4),
+    T2 is T+1,
+    L4=[H, T2].
+

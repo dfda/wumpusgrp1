@@ -139,3 +139,8 @@ cima([H, T], L1):-
     not(H==4),
     H1 is H+1,
     L1=[H1, T].
+
+baixo([H, T], L2):-
+    not(H==1),
+    H2 is H-1,
+    L2=[H2,T].

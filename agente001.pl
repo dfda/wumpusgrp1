@@ -135,4 +135,7 @@ adjacentes([H, T], L):-
     write('Adjacentes: '),
     writeln(L).
 
-
+cima([H, T], L1):-
+    not(H==4),
+    H1 is H+1,
+    L1=[H1, T].

@@ -99,13 +99,13 @@ tiro :-
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
 
-novosentido(O):- 
+novosentido(O):- %muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(S),
     O is (S+90) mod 360,
     retractall(orientacao(_)),
     assert(orientacao(O)).
 
-novaposicao(0) :-
+novaposicao(0) :- 
     minhacasa([X,Y]),
     X1 is X+1,  %Necessario validar a posicao
     retractall(minhacasa([_|_])),
@@ -120,7 +120,7 @@ novaposicao(180) :-
     X1 is X-1, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
-novaposicao(90) :-
+novaposicao(270) :-
     minhacasa([X,Y]),
     Y1 is Y-1, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),

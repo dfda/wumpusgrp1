@@ -81,8 +81,8 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-
     tiro. %agente atira ao sentir fedor do wumpus%
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
-    orientacao(O),
-    novaposicao(O).
+    orientacao(Ori),
+    novaposicao(Ori).
 
 estou_sentindo_uma_treta([_,no,no,no,_], goforward).
 
@@ -103,7 +103,7 @@ novosentidoleft:- %muda a memoria do sentido atual caso aconteca um turnleft
     O is (S+90) mod 360,
     retractall(orientacao(_)),
     assert(orientacao(O)).
-novosentidoright(O):- %muda a memoria do sentido atual caso aconteca um turnright
+novosentidoright:- %muda a memoria do sentido atual caso aconteca um turnright
     orientacao(S),
     O is (S-90) mod 360,
     retractall(orientacao(_)),
@@ -111,22 +111,50 @@ novosentidoright(O):- %muda a memoria do sentido atual caso aconteca um turnrigh
 
 novaposicao(0):- 
     minhacasa([X,Y]),
+    X<4,
     X1 is X+1,  %Necessario validar a posicao
+    retractall(minhacasa([_|_])),
+    assert(minhacasa([X1,Y])).
+novaposicao(0):- 
+    minhacasa([X,Y]),
+    X==4,
+    X1 is X,  %Necessario validar a posicao
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao(90):-
     minhacasa([X,Y]),
+    Y<4,
     Y1 is Y+1, %Necessario validar e limitar posicao de Y ate 4
+    retractall(minhacasa([_|_])),
+    assert(minhacasa([X,Y1])).
+novaposicao(90):-
+    minhacasa([X,Y]),
+    Y==4,
+    Y1 is Y, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
 novaposicao(180):-
     minhacasa([X,Y]),
+    X>1,
     X1 is X-1, %Necessario validar e limitar posicao de Y ate 4
+    retractall(minhacasa([_|_])),
+    assert(minhacasa([X1,Y])).
+novaposicao(180):-
+    minhacasa([X,Y]),
+    X==1,
+    X1 is X, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao(270):-
     minhacasa([X,Y]),
+    Y>1,
     Y1 is Y-1, %Necessario validar e limitar posicao de Y ate 4
+    retractall(minhacasa([_|_])),
+    assert(minhacasa([X,Y1])).
+novaposicao(270):-
+    minhacasa([X,Y]),
+    Y==1,
+    Y1 is Y, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
 %para recolhimento de listas
@@ -135,8 +163,8 @@ membro(X, [_|Y]):-
     membro(X,Y).
 
 % Casas adjacentes
-minhacasa([H, T]):-
-    adjacentes([H, T], L).
+%minhacasa([H, T]):-
+% adjacentes([H, T], L).
 
 % A regra chamara outras regrar para somar e diminuir cara coordenada
 adjacentes([H, T], L):-

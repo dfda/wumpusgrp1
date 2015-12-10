@@ -179,6 +179,15 @@ adjacentes([H, T], L):-
     write('Adjacentes: '),
     writeln(L).
 
+adjacentes([H, T], L):-
+    H==4,
+    T==4,
+    baixo([H, T], L2),
+    esquerda([H, T], L3),
+    L=[L2, L3],
+    write('Adjacentes: '),
+    writeln(L).
+
 
 % Funcoes para calcular as coordenas das casas adjacentes
 cima([H, T], L1):-

@@ -161,6 +161,16 @@ adjacentes([H, T], L):-
     write('Adjacentes: '),
     writeln(L).
 
+adjacentes([H, T], L):-
+    H==4,
+    T==1,
+    cima([H, T], L1),
+    esquerda([H, T], L3),
+    L=[L1, L3],
+    write('Adjacentes: '),
+    writeln(L).
+
+
 % Funcoes para calcular as coordenas das casas adjacentes
 cima([H, T], L1):-
     T1 is T+1,

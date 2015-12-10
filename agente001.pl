@@ -46,13 +46,10 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     assert(agent_flecha(1)),
     retractall(wumpus(_)),
     assert(wumpus(alive)).
-% esta funcao permanece a mesma. Nao altere.
+
 restart_agent :- 
     init_agent.
 
-% esta e a funcao chamada pelo simulador. Nao altere a "cabeca" da funcao. Apenas o corpo.
-% Funcao recebe Percepcao, uma lista conforme descrito acima.
-% Deve retornar uma Acao, dentre as acoes validas descritas acima.
 run_agent(Percepcao, Acao) :-
     write('Percebi: '), 
     writeln(Percepcao),
@@ -73,8 +70,7 @@ estou_sentindo_uma_treta([_,_,_,_,yes]):-
     assert(wumpus(dead)).
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-    orientacao(O),
-    novosentidoleft(O).
+    novosentidoleft.
 
 %estou_sentindo_uma_treta([yes,_,_,_,yes], goforward). %agente segue em frente depois de ouvir grito, mesmo sentindo fedor
 
@@ -88,10 +84,13 @@ estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente cas
     orientacao(O),
     novaposicao(O).
 
+estou_sentindo_uma_treta([_,no,no,no,_], goforward).
+
 %estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
 
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab). %agente coleta ouro ao perceber seu brilho%
 
+% Funcoes
 tiro :- 
     agent_flecha(X),
     X>0,
@@ -99,7 +98,7 @@ tiro :-
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
 
-novosentidoleft(O):- %muda a memoria do sentido atual caso aconteca um turnleft
+novosentidoleft:- %muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(S),
     O is (S+90) mod 360,
     retractall(orientacao(_)),
@@ -110,22 +109,22 @@ novosentidoright(O):- %muda a memoria do sentido atual caso aconteca um turnrigh
     retractall(orientacao(_)),
     assert(orientacao(O)).
 
-novaposicao(0) :- 
+novaposicao(0):- 
     minhacasa([X,Y]),
     X1 is X+1,  %Necessario validar a posicao
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
-novaposicao(90) :-
+novaposicao(90):-
     minhacasa([X,Y]),
     Y1 is Y+1, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
-novaposicao(180) :-
+novaposicao(180):-
     minhacasa([X,Y]),
     X1 is X-1, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
-novaposicao(270) :-
+novaposicao(270):-
     minhacasa([X,Y]),
     Y1 is Y-1, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),

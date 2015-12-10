@@ -141,13 +141,28 @@ minhacasa([H, T]):-
 % A regra chamara outras regrar para somar e diminuir cara coordenada
 % Cria uma lista com todas as quatro casas adjacentes, porem, se a posicao do agente for nas extremidades, lista ainda mostra quatro adjacentes
 adjacentes([H, T], L):-
+    H\==1,
+    H\==4,
+    T\==1,
+    T\==4,
     cima([H, T], L1),
     baixo([H, T], L2),
-    esqueda([H, T], L3),
+    esquerda([H, T], L3),
     direita([H, T], L4),
     L=[L1, L2, L3, L4],
     write('Adjacentes: '),
     writeln(L).
+
+adjacentes([H, T], L):-
+    H==1,
+    cima([H, T], L1),
+    baixo([H, T], L2),
+    esquera([H, T], L3),
+    direita([H, T], L4),
+    L=[L1, L2, L3, L4],
+    write('Adjacentes: '),
+    writeln(L).
+
 
 % Soma 1 na coordenada X
 cima([H, T], L1):-
@@ -160,7 +175,7 @@ baixo([H, T], L2):-
     L2=[H2, T].
 
 % Soma 1 na coordenada Y
-esqueda([H, T], L3):-
+esquerda([H, T], L3):-
     T1 is T-1,
     L3=[H, T1].
 

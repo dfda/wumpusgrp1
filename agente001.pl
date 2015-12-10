@@ -154,11 +154,10 @@ adjacentes([H, T], L):-
 
 adjacentes([H, T], L):-
     H==1,
+    T==1,
     cima([H, T], L1),
-    baixo([H, T], L2),
-    esquera([H, T], L3),
     direita([H, T], L4),
-    L=[L1, L2, L3, L4],
+    L=[L1, L4],
     write('Adjacentes: '),
     writeln(L).
 

@@ -59,6 +59,7 @@ run_agent(Percepcao, Acao) :-
     minhacasa(Posicao),
     write('Minha posicao: '),
     writeln(Posicao),
+    adjacentes(Posicao, L),
     orientacao(Sentido),
     write('Sentido do agente: '),
     writeln(Sentido),
@@ -163,9 +164,6 @@ membro(X, [_|Y]):-
     membro(X,Y).
 
 % Casas adjacentes
-%minhacasa([H, T]):-
-% adjacentes([H, T], L).
-
 % A regra chamara outras regrar para somar e diminuir cara coordenada
 adjacentes([H, T], L):-
     H\==1,

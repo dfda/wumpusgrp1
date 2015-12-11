@@ -64,14 +64,14 @@ run_agent(Percepcao, Acao) :-
     write('Sentido do agente: '),
     writeln(Sentido),
     estou_sentindo_uma_treta(Percepcao, Acao),
-    casa_segura(Percepcao, Listadecasasegura),
+    casa_segura(Percepcao, L, Listadecasasegura),
     write('Casas seguras: '),
     writeln(Listadecasasegura).
     
-casa_segura([no,no,_,_,no], Listadecasasegura):-
-    minhacasa([H, T]),
-    adjacentes([H, T], L),
-    not(member(L, Listadecasasegura)),
+casa_segura([no,no,_,_,no], L, Listadecasasegura):-
+    %minhacasa([H, T]),
+    %adjacentes([H, T], L),
+    %not(member([L1,L2,L3,L4], X)),
     append(L, [], Listadecasasegura).
 
 % Fatos (acoes que vao ser executadas)

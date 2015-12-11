@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1, casas_seguras/1). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1]).%, casas_seguras/1). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -45,9 +45,7 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(agent_flecha(_)),
     assert(agent_flecha(1)),
     retractall(wumpus(_)),
-    assert(wumpus(alive)),
-    retractall(casas_seguras(_)),
-    assert(casas_seguras([[1,1]]).
+    assert(wumpus(alive)).
 
 restart_agent :- 
     init_agent.
@@ -66,11 +64,15 @@ run_agent(Percepcao, Acao) :-
     write('Sentido do agente: '),
     writeln(Sentido),
     estou_sentindo_uma_treta(Percepcao, Acao),
-    casasegura(Percepcao).
+    casa_segura(Percepcao, Listadecasasegura),
+    write('Casas seguras: '),
+    writeln(Listadecasasegura).
     
-casasegura([no,no,_,_,yes]):-
+casa_segura([no,no,_,_,no], Listadecasasegura):-
     minhacasa([H, T]),
-    adjacentes([H, T], L).
+    adjacentes([H, T], L),
+    not(member(L, Listadecasasegura)),
+    append(L, [], Listadecasasegura).
 
 % Fatos (acoes que vao ser executadas)
 estou_sentindo_uma_treta([_,_,_,_,yes]):-
@@ -268,18 +270,17 @@ adjacentes([H, T], L):-
 % Funcoes para calcular as coordenas das casas adjacentes
 cima([H, T], L1):-
     T1 is T+1,
-    L1=[H,T1].
+    L1=[H, T1].
 
 baixo([H, T], L2):-
     T2 is T-1,
-    L2=[H,T2].
+    L2=[H, T2].
 
 esquerda([H, T], L3):-
     H2 is H-1,
-    L3=[H2,T].
+    L3=[H2, T].
 
 direita([H, T], L4):-
     H1 is H+1,
     L4=[H1, T].
-
 

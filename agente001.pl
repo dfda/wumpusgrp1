@@ -182,45 +182,35 @@ adjacentes([H, T], L):-
     baixo([H, T], L2),
     esquerda([H, T], L3),
     direita([H, T], L4),
-    L=[L1, L2, L3, L4],
-    write('Adjacentes: '),
-    writeln(L).
+    L=[L1, L2, L3, L4].
 
 adjacentes([H, T], L):-
     H==1,
     T==1,
     cima([H, T], L1),
     direita([H, T], L4),
-    L=[L1, L4],
-    write('Adjacentes: '),
-    writeln(L).
+    L=[L1, L4].
 
 adjacentes([H, T], L):-
     H==4,
     T==1,
     cima([H, T], L1),
     esquerda([H, T], L3),
-    L=[L1, L3],
-    write('Adjacentes: '),
-    writeln(L).
+    L=[L1, L3].
 
 adjacentes([H, T], L):-
     H==1,
     T==4,
     direita([H, T], L4),
     baixo([H, T], L2),
-    L=[L2, L4],
-    write('Adjacentes: '),
-    writeln(L).
+    L=[L2, L4].
 
 adjacentes([H, T], L):-
     H==4,
     T==4,
     baixo([H, T], L2),
     esquerda([H, T], L3),
-    L=[L2, L3],
-    write('Adjacentes: '),
-    writeln(L).
+    L=[L2, L3].
 
 adjacentes([H, T], L):-
     H\==1,
@@ -229,9 +219,7 @@ adjacentes([H, T], L):-
     esquerda([H, T], L3),
     direita([H, T], L4),
     cima([H, T], L1),
-    L=[L1, L3, L4],
-    write('Adjacentes: '),
-    writeln(L).
+    L=[L1, L3, L4].
 
 adjacentes([H, T], L):-
     H\==1,
@@ -240,9 +228,7 @@ adjacentes([H, T], L):-
     esquerda([H, T], L3),
     direita([H, T], L4),
     baixo([H, T], L2),
-    L=[L2, L3, L4],
-    write('Adjacentes: '),
-    writeln(L).
+    L=[L2, L3, L4].
 
 adjacentes([H, T], L):-
     T\==1,
@@ -251,9 +237,7 @@ adjacentes([H, T], L):-
     cima([H, T], L1),
     direita([H, T], L4),
     baixo([H, T], L2),
-    L=[L1, L2, L4],
-    write('Adjacentes: '),
-    writeln(L).
+    L=[L1, L2, L4].
 
 adjacentes([H, T], L):-
     T\==1,
@@ -262,9 +246,7 @@ adjacentes([H, T], L):-
     cima([H,T], L1),
     esquerda([H, T], L3),
     baixo([H, T], L2),
-    L=[L1, L2, L3],
-    write('Adjacentes: '),
-    writeln(L).
+    L=[L1, L2, L3].
 
 % Funcoes para calcular as coordenas das casas adjacentes
 cima([H, T], L1):-

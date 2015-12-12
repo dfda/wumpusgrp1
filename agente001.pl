@@ -72,6 +72,7 @@ casa_segura([no,no,_,_,no], L, Listadecasasegura):-
     %minhacasa([H, T]),
     %adjacentes([H, T], L),
     %not(member([L1,L2,L3,L4], X)),
+    %Listadecasasegura=[[1,1]|Calda],
     append(L, [], Listadecasasegura).
 
 % Fatos (acoes que vao ser executadas)
@@ -167,10 +168,6 @@ novaposicao(270):-
     Y1 is Y, %Necessario validar e limitar posicao de Y ate 4
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
-%para recolhimento de listas
-membro(X,[X|_]).
-membro(X, [_|Y]):-
-    membro(X,Y).
 
 % Casas adjacentes
 % A regra chamara outras regrar para somar e diminuir cara coordenada

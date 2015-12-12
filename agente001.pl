@@ -60,6 +60,8 @@ run_agent(Percepcao, Acao) :-
     write('Minha posicao: '),
     writeln(Posicao),
     adjacentes(Posicao, L),
+    write('Casas adjacentes: '),
+    writeln(L),    
     orientacao(Sentido),
     write('Sentido do agente: '),
     writeln(Sentido),

@@ -55,20 +55,23 @@ restart_agent :-
 run_agent(Percepcao, Acao) :-
     write('Percebi: '), 
     writeln(Percepcao),
-    agent_flecha(Flecha),nl,
+    agent_flecha(Flecha),nl, % Chamada para recolher o valor da variavel Flecha
     write('Numero de flechas: '), 
     writeln(Flecha),
-    minhacasa(Posicao),
+    minhacasa(Posicao), % Chamada da funcao minhacasa para saber a posicao atual
     write('Minha posicao: '),
     writeln(Posicao),
-    adjacentes(Posicao, L),
+    adjacentes(Posicao, L), % Chamada da funcao adjacente para obter uma lista de casas adjacentes
     write('Casas adjacentes: '),
     writeln(L),    
-    orientacao(Sentido),
+    orientacao(Sentido), % Chamada da funcao orientacao para saber a orientacao atual do agente
     write('Sentido do agente: '),
     writeln(Sentido),
+    frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
+    write('Frente: '),
+    writeln(Frente),
     estou_sentindo_uma_treta(Percepcao, Acao),
-    casas_seguras(Percepcao, Cs),
+    casas_seguras(Percepcao, Cs), % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Cs).
    

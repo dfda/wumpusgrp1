@@ -122,6 +122,11 @@ casas_seguras([no,no,_,_,_], Cs):-
     %Listadecasasegura=[[1,1]|Calda],
     append([H, T], L, Cs).
 
+frente([H, T], Ori, L):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
+    Ori==0,
+    H1 is H + 1,
+    L=[H1, T].
+
 novosentidoleft:- %muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(S),
     O is (S+90) mod 360,

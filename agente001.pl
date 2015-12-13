@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1]).%, casas_seguras/1). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1, casas_seguras/1]).%, casas_seguras/1). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -45,7 +45,9 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(agent_flecha(_)),
     assert(agent_flecha(1)),
     retractall(wumpus(_)),
-    assert(wumpus(alive)).
+    assert(wumpus(alive)),
+    retractall(casas_seguras(_)),
+    assert(casas_seguras([1,1])).
 
 restart_agent :- 
     init_agent.
@@ -66,16 +68,17 @@ run_agent(Percepcao, Acao) :-
     write('Sentido do agente: '),
     writeln(Sentido),
     estou_sentindo_uma_treta(Percepcao, Acao),
-    casa_segura(Percepcao, L, Listadecasasegura),
+    casas_seguras(Percepcao, Cs),
     write('Casas seguras: '),
-    writeln(Listadecasasegura).
-    
-casa_segura([no,no,_,_,no], L, Listadecasasegura):-
-    %minhacasa([H, T]),
-    %adjacentes([H, T], L),
+    writeln(Cs).
+   
+casas_seguras([no,no,_,_,_], Cs):-
+    minhacasa([H, T]),
+    adjacentes([H, T], L),
     %not(member([L1,L2,L3,L4], X)),
     %Listadecasasegura=[[1,1]|Calda],
-    append(L, [], Listadecasasegura).
+    append([H, T], L, Cs).
+
 
 % Fatos (acoes que vao ser executadas)
 estou_sentindo_uma_treta([_,_,_,_,yes]):-

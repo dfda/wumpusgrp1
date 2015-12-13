@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1, casas_seguras/1]).%, casas_seguras/1). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1, casas_seguras/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -97,6 +97,10 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-
     tiro. %agente atira ao sentir fedor do wumpus%
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
+    orientacao(Ori),
+    novaposicao(Ori).
+
+estou_sentindo_uma_treta([no,no,no,no,no], goforward):-
     orientacao(Ori),
     novaposicao(Ori).
 

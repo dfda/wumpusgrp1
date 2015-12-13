@@ -72,12 +72,6 @@ run_agent(Percepcao, Acao) :-
     write('Casas seguras: '),
     writeln(Cs).
    
-casas_seguras([no,no,_,_,_], Cs):-
-    minhacasa([H, T]),
-    adjacentes([H, T], L),
-    %not(member([L1,L2,L3,L4], X)),
-    %Listadecasasegura=[[1,1]|Calda],
-    append([H, T], L, Cs).
 
 
 % Fatos (acoes que vao ser executadas)
@@ -118,6 +112,13 @@ tiro :-
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
 
+casas_seguras([no,no,_,_,_], Cs):-
+    minhacasa([H, T]),
+    adjacentes([H, T], L),
+    %not(member([L1,L2,L3,L4], X)),
+    %Listadecasasegura=[[1,1]|Calda],
+    append([H, T], L, Cs).
+
 novosentidoleft:- %muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(S),
     O is (S+90) mod 360,
@@ -132,49 +133,49 @@ novosentidoright:- %muda a memoria do sentido atual caso aconteca um turnright
 novaposicao(0):- 
     minhacasa([X,Y]),
     X<4,
-    X1 is X+1,  %Necessario validar a posicao
+    X1 is X+1,  
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao(0):- 
     minhacasa([X,Y]),
     X==4,
-    X1 is X,  %Necessario validar a posicao
+    X1 is X,  
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao(90):-
     minhacasa([X,Y]),
     Y<4,
-    Y1 is Y+1, %Necessario validar e limitar posicao de Y ate 4
+    Y1 is Y+1, 
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
 novaposicao(90):-
     minhacasa([X,Y]),
     Y==4,
-    Y1 is Y, %Necessario validar e limitar posicao de Y ate 4
+    Y1 is Y, 
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
 novaposicao(180):-
     minhacasa([X,Y]),
     X>1,
-    X1 is X-1, %Necessario validar e limitar posicao de Y ate 4
+    X1 is X-1,
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao(180):-
     minhacasa([X,Y]),
     X==1,
-    X1 is X, %Necessario validar e limitar posicao de Y ate 4
+    X1 is X,
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao(270):-
     minhacasa([X,Y]),
     Y>1,
-    Y1 is Y-1, %Necessario validar e limitar posicao de Y ate 4
+    Y1 is Y-1,
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
 novaposicao(270):-
     minhacasa([X,Y]),
     Y==1,
-    Y1 is Y, %Necessario validar e limitar posicao de Y ate 4
+    Y1 is Y,
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
 

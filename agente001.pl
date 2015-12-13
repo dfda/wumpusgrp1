@@ -127,6 +127,11 @@ frente([H, T], Ori, L):- % caso a orientacao do agente seja 0, a casa da frente 
     H1 is H + 1,
     L=[H1, T].
 
+frente([H, T], Ori, L):- % caso a orientacao do agente seja 90, a casa da frente sera com o 2o elemento da lista mais 1
+    Ori==90,
+    T1 is T + 1,
+    L=[H, T1].
+
 novosentidoleft:- %muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(S),
     O is (S+90) mod 360,

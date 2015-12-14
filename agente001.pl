@@ -110,14 +110,14 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flec
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     orientacao(Ori),
-    casasvisitadas,
-    novaposicao(Ori).
+    novaposicao(Ori),
+    casasvisitadas.
     %caminho_seguro.
 
 estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
      orientacao(Ori),
-     casasvisitadas,
-     novaposicao(Ori).
+     novaposicao(Ori),
+     casasvisitadas.
     %caminho_seguro.
 
 %estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
@@ -144,9 +144,9 @@ casas_seguras([_,_,_,_,_], Cs) :-
     true.
 
 casasvisitadas :-
-    minhacasa(L),
+    minhacasa(N),
     casas_visitadas(M),
-    union([L], [M], P),
+    union([N], [M], P),
     retractall(casas_visitadas(_)),
     assert(casas_visitadas(P)).
 

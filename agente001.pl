@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1, casas_seguras/1]). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -47,7 +47,9 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(wumpus(_)),
     assert(wumpus(alive)),
     retractall(casas_seguras(_)),
-    assert(casas_seguras([1,1])).
+    assert(casas_seguras([1,1])),
+    retractall(casas_visitadas(_)),
+    assert(casas_visitadas([1,1])).
 
 restart_agent :- 
     init_agent.
@@ -61,6 +63,7 @@ run_agent(Percepcao, Acao) :-
     minhacasa(Posicao), % Chamada da funcao minhacasa para saber a posicao atual
     write('Minha posicao: '),
     writeln(Posicao),
+    visitadas,
     adjacentes(Posicao, L), % Chamada da funcao adjacente para obter uma lista de casas adjacentes
     write('Casas adjacentes: '),
     writeln(L),    
@@ -122,6 +125,24 @@ casas_seguras([no,no,_,_,_], Cs):-
     append([X, Y], L, Cs).
 casas_seguras([_,_,_,_,_], Cs) :-
     Cs is 0.
+
+visitadas :-
+    minhacasa([X,Y]),
+    L=[],
+    append([X,Y], L, G),
+    %casas_visitadas([A,B]),
+    %append(A, B, T),
+    assert(casas_visitadas([G|_])),
+    casas_visitadas(P),
+    write('Casas visitadas:'),
+    writeln(P), true.
+    
+%casas_visitadas(C):- 
+%   minhacasa([_,_]),
+%   M = C,
+%   append([X,Y], M, C)
+%   writeln (C).
+
 
 %caminho_seguro:-
 %   minhacasa([X,Y]),

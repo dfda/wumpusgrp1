@@ -70,10 +70,10 @@ run_agent(Percepcao, Acao) :-
     frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
     write('Frente: '),
     writeln(Frente),
-    estou_sentindo_uma_treta(Percepcao, Acao),
     casas_seguras(Percepcao, Cs), % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Cs).
+    estou_sentindo_uma_treta(Percepcao, Acao),
     % caminho_seguro(CS),
     %write('Caminho seguro: '),
     % writeln(CS).

@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1]). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -46,6 +46,8 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     assert(agent_flecha(1)),
     retractall(wumpus(_)),
     assert(wumpus(alive)),
+    retractall(ouro(_)),
+    assert(ouro(0)),
     retractall(casas_seguras(_)),
     assert(casas_seguras([1,1])),
     retractall(casas_visitadas(_)),
@@ -62,6 +64,9 @@ run_agent(Percepcao, Acao) :-
     agent_flecha(Flecha),nl, % Chamada para recolher o valor da variavel Flecha
     write('Numero de flechas: '), 
     writeln(Flecha),
+    ouro(N),
+    write('Numero de ouro: '),
+    writeln(N),
     minhacasa(Posicao), % Chamada da funcao minhacasa para saber a posicao atual
     write('Minha posicao: '),
     writeln(Posicao),
@@ -97,11 +102,11 @@ estou_sentindo_uma_treta([_,_,_,_,yes]):- %Wumpus morto apos agente ouvir o grit
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
     novosentidoleft.
 
-estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :- 
+estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
     agent_flecha(X), 
     X==1, 
     wumpus(alive), 
-    tiro. %agente atira ao sentir fedor do wumpus%
+    tiro. 
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     orientacao(Ori),
@@ -117,7 +122,9 @@ estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente 
 
 %estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
 
-estou_sentindo_uma_treta([_,_,yes,_,_],  grab). %agente coleta ouro ao perceber seu brilho%
+estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
+    retractall(ouro(_)),
+    assert(ouro(1)).
 
 % Funcoes
 tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
@@ -133,10 +140,8 @@ casas_seguras([no,no,_,_,_], Cs):- %casas que sao seguras, com base em casas adj
     %not(member([L1,L2,L3,L4], X)),
     %Listadecasasegura=[[1,1]|Calda],
     append([X, Y], L, Cs).
-casas_seguras([yes,yes,_,_,_], Cs) :-
-    Cs is 0.
 casas_seguras([_,_,_,_,_], Cs) :-
-    Cs is 0.
+    true.
 
 casasvisitadas :-
     minhacasa(L),

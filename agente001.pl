@@ -70,10 +70,10 @@ run_agent(Percepcao, Acao) :-
     frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
     write('Frente: '),
     writeln(Frente),
+    casas_seguras(Percepcao, Cs), % Chamada da funcao casa segura, dependendo da percepcao do agente
+    write('Casas seguras: '),
+    writeln(Cs),
     estou_sentindo_uma_treta(Percepcao, Acao).
-    %casas_seguras(Percepcao, LIS), % Chamada da funcao casa segura, dependendo da percepcao do agente
-    %write('Casas seguras: '),
-    %writeln(LIS).
     % caminho_seguro(CS),
     %write('Caminho seguro: '),
     % writeln(CS).
@@ -97,9 +97,9 @@ estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente cas
     novaposicao(Ori).
     %caminho_seguro.
 
-    %estou_sentindo_uma_treta([no,no,no,no,no], goforward):-
-    % orientacao(Ori),
-    %novaposicao(Ori).
+estou_sentindo_uma_treta([no,no,no,no,no], goforward):-
+     orientacao(Ori),
+     novaposicao(Ori).
     %caminho_seguro.
 
 %estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
@@ -114,12 +114,14 @@ tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
 
-casas_seguras([no,no,_,_,_], LIS):-
+casas_seguras([no,no,_,_,_], Cs):-
     minhacasa([X, Y]),
     adjacentes([X, Y], L),
     %not(member([L1,L2,L3,L4], X)),
     %Listadecasasegura=[[1,1]|Calda],
-    append([X, Y], L, LIS).
+    append([X, Y], L, Cs).
+casas_seguras([_,_,_,_,_], Cs) :-
+    Cs is 0.
 
 %caminho_seguro:-
 %   minhacasa([X,Y]),

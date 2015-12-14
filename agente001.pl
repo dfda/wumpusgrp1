@@ -74,8 +74,7 @@ run_agent(Percepcao, Acao) :-
     casas_seguras(Percepcao, Cs), % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Cs).
-   
-
+%rite('Caminho seguro: '),
 
 % Fatos (acoes que vao ser executadas)
 estou_sentindo_uma_treta([_,_,_,_,yes]):-
@@ -95,13 +94,18 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     orientacao(Ori),
-    novaposicao(Ori).
+    novaposicao(Ori),
+    caminho_seguro.
 
 estou_sentindo_uma_treta([no,no,no,no,no], goforward):-
     orientacao(Ori),
-    novaposicao(Ori).
+    novaposicao(Ori),
+    caminho_seguro.
 
-estou_sentindo_uma_treta([_,no,no,no,_], goforward).
+estou_sentindo_uma_treta([_,no,no,no,_], goforward):-
+    orientacao(Ori),
+    novaposicao(Ori),
+    caminho_seguro.
 
 %estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
 
@@ -121,6 +125,14 @@ casas_seguras([no,no,_,_,_], Cs):-
     %not(member([L1,L2,L3,L4], X)),
     %Listadecasasegura=[[1,1]|Calda],
     append([X, Y], L, Cs).
+
+caminho_seguro:-
+    minhacasa([X,Y]),
+    casas_seguras(Cs),
+    ((not(member([X,Y], Cs)),
+    append(Cs, [X,Y], NL),
+    retractall(casas_seguras(_)),
+    assert(casas_seguras(NL))|(true)).
 
 frente([X, Y], Ori, L):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
     Ori==0,

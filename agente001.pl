@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1]). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -49,7 +49,9 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(casas_seguras(_)),
     assert(casas_seguras([1,1])),
     retractall(casas_visitadas(_)),
-    assert(casas_visitadas([1,1])).
+    assert(casas_visitadas([1,1])),
+    retractall(casa_anterior(_)),
+    assert(casa_anterior([_,_])).
 
 restart_agent :- 
     init_agent.
@@ -76,10 +78,13 @@ run_agent(Percepcao, Acao) :-
     casas_seguras(Percepcao, Cs), % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Cs),
-    estou_sentindo_uma_treta(Percepcao, Acao).
+    estou_sentindo_uma_treta(Percepcao, Acao),
     % caminho_seguro(CS),
     %write('Caminho seguro: '),
     % writeln(CS).
+    casa_anterior(Z),
+    write('casa anterior: '),
+    writeln(Z).
 
 % Fatos (acoes que vao ser executadas)
 estou_sentindo_uma_treta([_,_,_,_,yes]):- %Wumpus morto apos agente ouvir o grito%
@@ -186,9 +191,12 @@ novosentidoright:- %muda a memoria do sentido atual caso aconteca um turnright
 novaposicao(0):- 
     minhacasa([X,Y]),
     X<4,
-    X1 is X+1,  
+    X1 is X+1,
+    retractall(casa_anterior([_,_])),
+    assert(casa_anterior([X,Y])),
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
+
 novaposicao(0):- 
     minhacasa([X,Y]),
     X==4,

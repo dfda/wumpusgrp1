@@ -65,7 +65,9 @@ run_agent(Percepcao, Acao) :-
     minhacasa(Posicao), % Chamada da funcao minhacasa para saber a posicao atual
     write('Minha posicao: '),
     writeln(Posicao),
-    visitadas,
+    casas_visitadas(Casa),
+    write('Casas visitadas: '),
+    writeln(Casa),
     adjacentes(Posicao, L), % Chamada da funcao adjacente para obter uma lista de casas adjacentes
     write('Casas adjacentes: '),
     writeln(L),    
@@ -103,11 +105,13 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     orientacao(Ori),
+    casasvisitadas,
     novaposicao(Ori).
     %caminho_seguro.
 
 estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
      orientacao(Ori),
+     casasvisitadas,
      novaposicao(Ori).
     %caminho_seguro.
 
@@ -129,26 +133,17 @@ casas_seguras([no,no,_,_,_], Cs):- %casas que sao seguras, com base em casas adj
     %not(member([L1,L2,L3,L4], X)),
     %Listadecasasegura=[[1,1]|Calda],
     append([X, Y], L, Cs).
+casas_seguras([yes,yes,_,_,_], Cs) :-
+    Cs is 0.
 casas_seguras([_,_,_,_,_], Cs) :-
     Cs is 0.
 
-visitadas :-
-    minhacasa([X,Y]),
-    L=[],
-    append([X,Y], L, G),
-    %casas_visitadas([A,B]),
-    %append(A, B, T),
-    assert(casas_visitadas([G|_])),
-    casas_visitadas(P),
-    write('Casas visitadas:'),
-    writeln(P), true.
-    
-%casas_visitadas(C):- 
-%   minhacasa([_,_]),
-%   M = C,
-%   append([X,Y], M, C)
-%   writeln (C).
-
+casasvisitadas :-
+    minhacasa(L),
+    casas_visitadas(M),
+    union([L], [M], P),
+    retractall(casas_visitadas(_)),
+    assert(casas_visitadas(P)).
 
 %caminho_seguro:- 
 %   minhacasa([X,Y]),

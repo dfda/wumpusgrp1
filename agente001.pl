@@ -193,7 +193,7 @@ novaposicao(0):-
     assert(casa_anterior([X,Y])),
     X<4,
     X1 is X+1,   
-    retractall(minhacasa([_,_])),
+    retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao(0):- 
     minhacasa([X,Y]),
@@ -220,7 +220,7 @@ novaposicao(90):-
     retractall(minhacasa([_,_])),
     assert(minhacasa([X,Y1])).
 novaposicao(180):-
-    minhacasa([X,Y]), 
+    minhacasa([X,Y]),
     retractall(casa_anterior([_,_])),
     assert(casa_anterior([X,Y])),
     X>1,

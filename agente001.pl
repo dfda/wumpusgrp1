@@ -89,7 +89,8 @@ run_agent(Percepcao, Acao) :-
 % Fatos (acoes que vao ser executadas)
 estou_sentindo_uma_treta([_,_,_,_,yes]):- %Wumpus morto apos agente ouvir o grito%
     retractall(wumpus(_)), 
-    assert(wumpus(dead)).
+    assert(wumpus(dead)),
+    fail.
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
     novosentidoleft.

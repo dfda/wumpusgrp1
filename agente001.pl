@@ -190,51 +190,65 @@ novosentidoright:- %muda a memoria do sentido atual caso aconteca um turnright
 
 novaposicao(0):- 
     minhacasa([X,Y]),
-    X<4,
-    X1 is X+1,
     retractall(casa_anterior([_,_])),
     assert(casa_anterior([X,Y])),
+    X<4,
+    X1 is X+1,
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 
 novaposicao(0):- 
     minhacasa([X,Y]),
+    retractall(casa_anterior([_,_])),
+    assert(casa_anterior([X,Y])),
     X==4,
     X1 is X,  
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao(90):-
     minhacasa([X,Y]),
+    retractall(casa_anterior([_,_])),
+    assert(casa_anterior([X,Y])),
     Y<4,
     Y1 is Y+1, 
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
 novaposicao(90):-
     minhacasa([X,Y]),
+    retractall(casa_anterior([_,_])),
+    assert(casa_anterior([X,Y])),
     Y==4,
     Y1 is Y, 
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
 novaposicao(180):-
     minhacasa([X,Y]),
+    retractall(casa_anterior([_,_])),
+    assert(casa_anterior([X,Y])),
     X>1,
     X1 is X-1,
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao(180):-
     minhacasa([X,Y]),
+    retractall(casa_anterior([_,_])),
+    assert(casa_anterior([X,Y])),
     X==1,
     X1 is X,
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 novaposicao(270):-
     minhacasa([X,Y]),
+    retractall(casa_anterior([_,_])),
+    assert(casa_anterior([X,Y])),
     Y>1,
     Y1 is Y-1,
     retractall(minhacasa([_|_])),
     assert(minhacasa([X,Y1])).
 novaposicao(270):-
     minhacasa([X,Y]),
+    retractall(casa_anterior([_,_])),
+    assert(casa_anterior([X,Y])),
     Y==1,
     Y1 is Y,
     retractall(minhacasa([_|_])),

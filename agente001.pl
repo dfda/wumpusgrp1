@@ -74,10 +74,12 @@ run_agent(Percepcao, Acao) :-
     casas_seguras(Percepcao, Cs), % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Cs).
-%rite('Caminho seguro: '),
+    % caminho_seguro(CS),
+    %write('Caminho seguro: '),
+    % writeln(CS).
 
 % Fatos (acoes que vao ser executadas)
-estou_sentindo_uma_treta([_,_,_,_,yes]):-
+estou_sentindo_uma_treta([_,_,_,_,yes]):- %Wumpus morto apos agente ouvir o grito%
     retractall(wumpus(_)), 
     assert(wumpus(dead)).
 
@@ -94,25 +96,25 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     orientacao(Ori),
-    novaposicao(Ori),
-    caminho_seguro.
+    novaposicao(Ori).
+    %caminho_seguro.
 
 estou_sentindo_uma_treta([no,no,no,no,no], goforward):-
     orientacao(Ori),
-    novaposicao(Ori),
-    caminho_seguro.
+    novaposicao(Ori).
+    %caminho_seguro.
 
 estou_sentindo_uma_treta([_,no,no,no,_], goforward):-
     orientacao(Ori),
-    novaposicao(Ori),
-    caminho_seguro.
+    novaposicao(Ori).
+    % caminho_seguro.
 
 %estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
 
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab). %agente coleta ouro ao perceber seu brilho%
 
 % Funcoes
-tiro :- 
+tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     agent_flecha(X),
     X>0,
     X1 is X-1,

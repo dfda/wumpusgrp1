@@ -100,7 +100,7 @@ estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente cas
     novaposicao(Ori).
     %caminho_seguro.
 
-estou_sentindo_uma_treta([no,no,no,no,no], goforward):-
+estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
      orientacao(Ori),
      novaposicao(Ori).
     %caminho_seguro.
@@ -117,7 +117,7 @@ tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
 
-casas_seguras([no,no,_,_,_], Cs):-
+casas_seguras([no,no,_,_,_], Cs):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
     minhacasa([X, Y]),
     adjacentes([X, Y], L),
     %not(member([L1,L2,L3,L4], X)),
@@ -144,7 +144,7 @@ visitadas :-
 %   writeln (C).
 
 
-%caminho_seguro:-
+%caminho_seguro:- 
 %   minhacasa([X,Y]),
 %   casas_seguras(Cs),
 %   ((not(member([X,Y], Cs)),

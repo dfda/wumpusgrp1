@@ -201,6 +201,12 @@ atualiza_casas_suspeitas(Casasuspeitainicial):-
     retractall(casas_suspeitas(_)),
     assert(casas_suspeitas(NovaLista2)).
 
+faz_frente([X, Y], Ori, Frente):- % caso a casa da frente seja invalida, a casa da frente e' a mesma casa que o agente esta
+    Ori==0,
+    X1 is X + 1,
+    X1>4,
+    Frente=[X, Y].
+
 faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
     Ori==0,
     X1 is X + 1,
@@ -211,15 +217,33 @@ faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 90, a casa 
     Y1 is Y + 1,
     Frente=[X, Y1].
 
+faz_frente([X, Y], Ori, Frente):- % caso a casa de frente seja invalida, a casa da frente e' a mesma casa que o agente esta
+    Ori==90,
+    Y1 is Y + 1,
+    Y1>4,
+    Frente=[X, Y].
+
 faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 180, a casa da frente sera com o 1o elemento da lista menos 1
     Ori==180,
     X1 is X - 1,
     Frente=[X1, Y].
 
+faz_frente([X, Y], Ori, Frente):- % casa invalida, permanece a casa atual como casa da frente
+    Ori==180,
+    X1 is X - 1,
+    X1<1,
+    Frente=[X, Y].
+
 faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
     Ori==270,
     Y1 is Y - 1,
     Frente=[X, Y1].
+
+faz_frente([X, Y], Ori, Frente):- % casa invalida, permanece a casa atual como casa da frente
+    Ori==270,
+    Y1 is Y - 1,
+    Y1<1,
+    Frente=[X, Y].
 
 novosentidoleft:- %muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(S),

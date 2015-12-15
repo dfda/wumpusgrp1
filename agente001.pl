@@ -70,9 +70,9 @@ run_agent(Percepcao, Acao) :-
     minhacasa(Posicao), % Chamada da funcao minhacasa para saber a posicao atual
     write('Minha posicao: '),
     writeln(Posicao),
-    casas_visitadas(Casa),
+    casas_visitadas(Casas),
     write('Casas visitadas: '),
-    writeln(Casa),
+    writeln(Casas),
     adjacentes(Posicao, L), % Chamada da funcao adjacente para obter uma lista de casas adjacentes
     write('Casas adjacentes: '),
     writeln(L),    
@@ -94,6 +94,15 @@ run_agent(Percepcao, Acao) :-
     writeln(Z).
 
 % Fatos (acoes que vao ser executadas)
+%
+estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
+    minhacasa([1,1]),
+    ouro(1).
+
+estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus
+    minhacasa([1,1]),
+    wumpus(dead).
+
 estou_sentindo_uma_treta([_,_,_,_,yes]):- %Wumpus morto apos agente ouvir o grito%
     retractall(wumpus(_)), 
     assert(wumpus(dead)),

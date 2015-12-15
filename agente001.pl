@@ -57,7 +57,7 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(casa_da_frente([_,_])),
     assert(casa_da_frente([2,1])),
     retractall(casas_suspeitas(_)),
-    assert(casas_suspeitas(0)).
+    assert(casas_suspeitas([])).
 
 
 restart_agent :- 
@@ -93,11 +93,10 @@ run_agent(Percepcao, Acao) :-
     write('Casas seguras: '),
     writeln(Cs),
     faz_casas_suspeitas(L, Cs, Casasuspeitainicial),
-    atualiza_casas_seguras(Casasuspeitainicial),
-    casas_seguras(Casassuspeitas),
+    atualiza_casas_suspeitas(Casasuspeitainicial),
+    casas_suspeitas(Casassuspeitas),
     write('Casas suspeitas: '),
     writeln(Casassuspeitas),
-
     agent_flecha(Flecha),           % Chamada para recolher o valor da variavel Flecha
     write('Numero de flechas: '), 
     writeln(Flecha),
@@ -196,7 +195,7 @@ faz_casas_suspeitas(L, Cs, Casasuspeitainicial):-
     intersection(Cs, L, L1),
     subtract(L, L1, Casasuspeitainicial).
 
-atualiza_casas_seguras(Casasuspeitainicial):-
+atualiza_casas_suspeitas(Casasuspeitainicial):-
     casas_suspeitas(Casassuspeitas),
     append(Casasuspeitainicial, Casassuspeitas, NovaLista1),
     list_to_set(NovaLista1, NovaLista),

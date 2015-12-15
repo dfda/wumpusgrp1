@@ -148,6 +148,10 @@ tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
 
+faz_casas_seguras(Posicao, L, [no,no,_,_,_], Csa):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
+    append([Posicao], L, Csb),
+    list_to_set(Csb, Csa).
+
 casasvisitadas :-  %regra para salvar casas visitadas%
     minhacasa(N),
     casas_visitadas(M),

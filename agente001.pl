@@ -78,18 +78,14 @@ run_agent(Percepcao, Acao) :-
     casa_da_frente(Frente),
     write('Casa frente: '),
     writeln(Frente),
-    %faz_casa_anterior(Posicao),
-    casa_anterior(Ca),
-    write('Casa anterior: '),
-    faz_casas_visitadas(Posicao),
-    casa_anterior(Ca),
+    casa_anterior(Ca),                 % Chamada para saber casa anterior 
     write('Casa anterior: '),
     writeln(Ca),
-    faz_casas_visitadas(Posicao),
+    faz_casas_visitadas(Posicao),       % Chamada para criar casas visitadas
     casas_visitadas(Cv),
     write('Casas visitadas: '),
     writeln(Cv),
-    faz_casas_seguras(Posicao, L, Percepcao, Csa),
+    faz_casas_seguras(Posicao, L, Percepcao, Csa),  % Chamada para criar casas seguras
     atualiza_casas_seguras(Csa),
     casas_seguras(Cs),   % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
@@ -97,14 +93,11 @@ run_agent(Percepcao, Acao) :-
     agent_flecha(Flecha),           % Chamada para recolher o valor da variavel Flecha
     write('Numero de flechas: '), 
     writeln(Flecha),
-    ouro(Q),                        % Chamada para recolher quantidade do ouro %
+    ouro(Q),                        % Chamada para recolher quantidade do ouro 
     write('Quantidade de ouro: '),
     writeln(Q),
     estou_sentindo_uma_treta(Percepcao, Acao),
-    faz_casa_anterior(Ca).
-    % caminho_seguro(CS),
-    %write('Caminho seguro: '),
-    % writeln(CS).
+    faz_casa_anterior(Ca).           % Chamada para avaliar se casa anterior esta correta%
     
 % Fatos (acoes que vao ser executadas)
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
@@ -180,7 +173,7 @@ faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
     retractall(casas_visitadas(_)),
     assert(casas_visitadas(NovaLista)).
 
-faz_casa_anterior(Ca) :-
+faz_casa_anterior(Ca) :-    %regra para mudar casa anterior caso agente nao mude e casa
     minhacasa([X,Y]),
     casa_anterior([L,M]),
     Y==M,
@@ -188,7 +181,7 @@ faz_casa_anterior(Ca) :-
     retractall(casa_anterior(_)),
     assert(casa_anterior(Ca)).
 
-faz_casa_anterior(Ca) :-
+faz_casa_anterior(Ca) :-  %regra pra que seja sempre verdade e acao seja retornada para o mundo%
     true.
 frente([X, Y], Ori, L):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
     Ori==0,

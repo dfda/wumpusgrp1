@@ -192,6 +192,10 @@ faz_casa_anterior(Ca) :-    %regra para mudar casa anterior caso agente nao mude
 faz_casa_anterior(_) :-  %regra pra que seja sempre verdade e acao seja retornada para o mundo%
    true.
 
+faz_casas_suspeitas(L, Cs, Casasuspeitainicial):-
+    intersection(Cs, L, L1),
+    subtract(L, L1, Casasuspeitainicial).
+
 faz_frente([X, Y], Ori, L):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
     Ori==0,
     X1 is X + 1,

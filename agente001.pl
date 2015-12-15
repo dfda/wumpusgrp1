@@ -80,6 +80,7 @@ run_agent(Percepcao, Acao) :-
     %faz_casa_anterior(Posicao),
     casa_anterior(Ca),
     write('Casa anterior: '),
+    writeln(Ca),
     faz_casas_visitadas(Posicao),
     casas_visitadas(Cv),
     write('Casas visitadas: '),
@@ -178,25 +179,33 @@ faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
 %   retractall(casas_seguras(_)),
 %   assert(casas_seguras(NL))|(true)).
 
-frente([X, Y], Ori, L):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
+faz_frente([X, Y], Ori, L):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
     Ori==0,
     X1 is X + 1,
-    L=[X1, Y].
+    L=[X1, Y],
+    retractall(casa_da_frente([_,_])),
+    assert(casa_da_frente(L)).
 
-frente([X, Y], Ori, L):- % caso a orientacao do agente seja 90, a casa da frente sera com o 2o elemento da lista mais 1
+faz_frente([X, Y], Ori, L):- % caso a orientacao do agente seja 90, a casa da frente sera com o 2o elemento da lista mais 1
     Ori==90,
     Y1 is Y + 1,
-    L=[X, Y1].
+    L=[X, Y1],
+    retractall(casa_da_frente([_,_])),
+    assert(casa_da_frente(L)).
 
-frente([X, Y], Ori, L):- % caso a orientacao do agente seja 180, a casa da frente sera com o 1o elemento da lista menos 1
+faz_frente([X, Y], Ori, L):- % caso a orientacao do agente seja 180, a casa da frente sera com o 1o elemento da lista menos 1
     Ori==180,
     X1 is X - 1,
-    L=[X1, Y].
+    L=[X1, Y],
+    retractall(casa_da_frente([_,_])),
+    assert(casa_da_frente(L)).
 
-frente([X, Y], Ori, L):- % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
+faz_frente([X, Y], Ori, L):- % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
     Ori==270,
     Y1 is Y - 1,
-    L=[X, Y1].
+    L=[X, Y1],
+    retractall(casa_da_frente([_,_])),
+    assert(casa_da_frente(L)).
 
 novosentidoleft:- %muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(S),

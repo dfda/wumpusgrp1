@@ -92,6 +92,12 @@ run_agent(Percepcao, Acao) :-
     casas_seguras(Cs),   % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Cs),
+    faz_casas_suspeitas(L, Cs, Casasuspeitainicial),
+    atualiza_casas_seguras(Casasuspeitainicial),
+    casas_seguras(Casassuspeitas),
+    write('Casas suspeitas: '),
+    writeln(Casassuspeitas),
+
     agent_flecha(Flecha),           % Chamada para recolher o valor da variavel Flecha
     write('Numero de flechas: '), 
     writeln(Flecha),

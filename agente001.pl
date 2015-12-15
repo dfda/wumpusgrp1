@@ -107,18 +107,6 @@ run_agent(Percepcao, Acao) :-
     % writeln(CS).
     
 % Fatos (acoes que vao ser executadas)
-
-faz_casa_anterior(Ca) :-
-    minhacasa([X,Y]),
-    casa_anterior([L,M]),
-    Y==M,
-    X==L,
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(Ca)).
-
-faz_casa_anterior(Ca) :-
-    true.
-
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
     ouro(1).
@@ -192,14 +180,16 @@ faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
     retractall(casas_visitadas(_)),
     assert(casas_visitadas(NovaLista)).
 
-%caminho_seguro:- 
-%   minhacasa([X,Y]),
-%   casas_seguras(Cs),
-%   ((not(member([X,Y], Cs)),
-%   append(Cs, [X,Y], NL),
-%   retractall(casas_seguras(_)),
-%   assert(casas_seguras(NL))|(true)).
+faz_casa_anterior(Ca) :-
+    minhacasa([X,Y]),
+    casa_anterior([L,M]),
+    Y==M,
+    X==L,
+    retractall(casa_anterior(_)),
+    assert(casa_anterior(Ca)).
 
+faz_casa_anterior(Ca) :-
+    true.
 frente([X, Y], Ori, L):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
     Ori==0,
     X1 is X + 1,

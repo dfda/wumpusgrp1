@@ -93,12 +93,25 @@ run_agent(Percepcao, Acao) :-
     ouro(Q),                        % Chamada para recolher quantidade do ouro %
     write('Quantidade de ouro: '),
     writeln(Q),
-    estou_sentindo_uma_treta(Percepcao, Acao).
+    estou_sentindo_uma_treta(Percepcao, Acao),
+    faz_casa_anterior(Ca).
     % caminho_seguro(CS),
     %write('Caminho seguro: '),
     % writeln(CS).
     
 % Fatos (acoes que vao ser executadas)
+
+faz_casa_anterior(Ca) :-
+    minhacasa([X,Y]),
+    casa_anterior([L,M]),
+    Y==M,
+    X==L,
+    retractall(casa_anterior(_)),
+    assert(casa_anterior(Ca)).
+
+faz_casa_anterior(Ca) :-
+    true.
+
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
     ouro(1).
@@ -113,7 +126,6 @@ estou_sentindo_uma_treta([_,_,_,_,yes], _):- %Wumpus morto apos agente ouvir o g
     fail.
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-
     novosentidoleft.
 
 estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
@@ -129,15 +141,13 @@ estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente cas
     retractall(casa_anterior(_)),
     assert(casa_anterior([X,Y])),
     novaposicao(Ori).
-    %caminho_seguro.
 
 estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
      orientacao(Ori),
-     minhacasa([X,Y]),
+     minhacasa([X]),
      retractall(casa_anterior(_)),
-     assert(casa_anterior([X,Y])),
+     assert(casa_anterior([X])),
      novaposicao(Ori).
-    %caminho_seguro.
 
 %estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
 

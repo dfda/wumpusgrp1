@@ -34,7 +34,7 @@
 :- load_files([wumpus3]).
 :- dynamic ([agent_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1]). %fatos dinamicos
 
-wumpusworld(pit3, 4).
+umpusworld(pit3, 4).
 
 init_agent :-                       % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
     writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente
@@ -59,40 +59,41 @@ restart_agent :-
     init_agent.
 
 run_agent(Percepcao, Acao) :-
+    nl,
     write('Percebi: '), 
     writeln(Percepcao),
-    agent_flecha(Flecha),nl, % Chamada para recolher o valor da variavel Flecha
-    write('Numero de flechas: '), 
-    writeln(Flecha),
-    ouro(Q),                % Chamada para recolher quantidade do ouro %
-    write('Quantidade de ouro: '),
-    writeln(Q),
-    minhacasa(Posicao), % Chamada da funcao minhacasa para saber a posicao atual
+    minhacasa(Posicao),             % Chamada da funcao minhacasa para saber a posicao atual
     write('Minha posicao: '),
     writeln(Posicao),
-    casas_visitadas(Casas),
-    write('Casas visitadas: '),
-    writeln(Casas),
-    adjacentes(Posicao, L), % Chamada da funcao adjacente para obter uma lista de casas adjacentes
+    adjacentes(Posicao, L),         % Chamada da funcao adjacente para obter uma lista de casas adjacentes
     write('Casas adjacentes: '),
-    writeln(L),    
-    orientacao(Sentido), % Chamada da funcao orientacao para saber a orientacao atual do agente
+    writeln(L),
+    orientacao(Sentido),            % Chamada da funcao orientacao para saber a orientacao atual do agente
     write('Sentido do agente: '),
     writeln(Sentido),
     frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
     write('Frente: '),
     writeln(Frente),
-    casas_seguras(Percepcao, Cs), % Chamada da funcao casa segura, dependendo da percepcao do agente
+    casas_visitadas(Casas),
+    casa_anterior(Z),
+    write('casa anterior: '),
+    writeln(Z),
+    write('Casas visitadas: '),
+    writeln(Casas),
+    casas_seguras(Percepcao, Cs),   % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Cs),
-    estou_sentindo_uma_treta(Percepcao, Acao),
+    agent_flecha(Flecha),           % Chamada para recolher o valor da variavel Flecha
+    write('Numero de flechas: '), 
+    writeln(Flecha),
+    ouro(Q),                        % Chamada para recolher quantidade do ouro %
+    write('Quantidade de ouro: '),
+    writeln(Q),
+    estou_sentindo_uma_treta(Percepcao, Acao).
     % caminho_seguro(CS),
     %write('Caminho seguro: '),
     % writeln(CS).
-    casa_anterior(Z),
-    write('casa anterior: '),
-    writeln(Z).
-
+    
 % Fatos (acoes que vao ser executadas)
 %
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
@@ -144,15 +145,6 @@ tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     X1 is X-1,
     retractall(agent_flecha(_)),
     assert(agent_flecha(X1)).
-
-casas_seguras([no,no,_,_,_], Cs):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
-    minhacasa([X, Y]),
-    adjacentes([X, Y], L),
-    %not(member([L1,L2,L3,L4], X)),
-    %Listadecasasegura=[[1,1]|Calda],
-    append([X, Y], L, Cs).
-casas_seguras([_,_,_,_,_], Cs) :-
-    true.
 
 casasvisitadas :-  %regra para salvar casas visitadas%
     minhacasa(N),

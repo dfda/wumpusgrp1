@@ -115,7 +115,8 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flec
     agent_flecha(X), 
     X==1, 
     wumpus(alive), 
-    tiro. 
+    tiro,
+    write('wumpus morto'), nl.
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     orientacao(Ori),
@@ -133,7 +134,8 @@ estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente 
 
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
     retractall(ouro(_)),
-    assert(ouro(1)).
+    assert(ouro(1)),
+    write('Estou com ouro'),nl.
 
 % Funcoes
 tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%

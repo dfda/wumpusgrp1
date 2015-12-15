@@ -196,6 +196,13 @@ faz_casas_suspeitas(L, Cs, Casasuspeitainicial):-
     intersection(Cs, L, L1),
     subtract(L, L1, Casasuspeitainicial).
 
+atualiza_casas_seguras(Casasuspeitainicial):-
+    casas_suspeitas(Casassuspeitas),
+    append(Casasuspeitainicial, Casassuspeitas, NovaLista1),
+    list_to_set(NovaLista1, NovaLista),
+    retractall(casas_suspeitas(_)),
+    assert(casas_suspeitas(NovaLista)).
+
 faz_frente([X, Y], Ori, L):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
     Ori==0,
     X1 is X + 1,

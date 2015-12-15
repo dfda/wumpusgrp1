@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agent_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1]). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casa_da_frente/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -53,7 +53,10 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(casas_visitadas(_)),
     assert(casas_visitadas([[1,1]])), % lista inicial de casas visitadas
     retractall(casa_anterior(_)),
-    assert(casa_anterior([1,1])).
+    assert(casa_anterior([1,1])),
+    retractall(casa_da_frente([_,_])),
+    assert(casa_da_frente([2,1])).
+
 
 restart_agent :- 
     init_agent.
@@ -71,10 +74,14 @@ run_agent(Percepcao, Acao) :-
     orientacao(Sentido),            % Chamada da funcao orientacao para saber a orientacao atual do agente
     write('Sentido do agente: '),
     writeln(Sentido),
-    frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
-    write('Frente: '),
+    faz_frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
+    casa_da_frente(Frente),
+    write('Casa frente: '),
     writeln(Frente),
-    %    faz_casa_anterior(Posicao),
+    %faz_casa_anterior(Posicao),
+    casa_anterior(Ca),
+    write('Casa anterior: '),
+    faz_casas_visitadas(Posicao),
     casa_anterior(Ca),
     write('Casa anterior: '),
     writeln(Ca),

@@ -74,9 +74,10 @@ run_agent(Percepcao, Acao) :-
     frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
     write('Frente: '),
     writeln(Frente),
-    faz_casa_anterior(Posicao),
+    %    faz_casa_anterior(Posicao),
     casa_anterior(Ca),
     write('Casa anterior: '),
+    writeln(Ca),
     faz_casas_visitadas(Posicao),
     casas_visitadas(Cv),
     write('Casas visitadas: '),
@@ -112,6 +113,7 @@ estou_sentindo_uma_treta([_,_,_,_,yes], _):- %Wumpus morto apos agente ouvir o g
     fail.
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
+
     novosentidoleft.
 
 estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
@@ -123,11 +125,17 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flec
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     orientacao(Ori),
+    minhacasa([X,Y]),
+    retractall(casa_anterior(_)),
+    assert(casa_anterior([X,Y])),
     novaposicao(Ori).
     %caminho_seguro.
 
 estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
      orientacao(Ori),
+     minhacasa([X,Y]),
+     retractall(casa_anterior(_)),
+     assert(casa_anterior([X,Y])),
      novaposicao(Ori).
     %caminho_seguro.
 
@@ -205,78 +213,62 @@ novosentidoright:- %muda a memoria do sentido atual caso aconteca um turnright
     O is (S-90) mod 360,
     retractall(orientacao(_)),
     assert(orientacao(O)).
+
 novaposicao(0):- 
     minhacasa([X,Y]),
     X<4,
     X1 is X+1,   
     retractall(minhacasa([_|_])),
-    assert(minhacasa([X1,Y])),
-    retractall(casa_anterior([_,_])),
-    assert(casa_anterior([X,Y])).
+    assert(minhacasa([X1,Y])).
 
 novaposicao(0):- 
     minhacasa([X,Y]),
     X==4,
     X1 is X,  
     retractall(minhacasa([_,_])),
-    assert(minhacasa([X1,Y])),
-    retractall(casa_anterior([_,_])),
-    assert(casa_anterior([X,Y])).
+    assert(minhacasa([X1,Y])).
 
 novaposicao(90):-
     minhacasa([X,Y]),
     Y<4,
     Y1 is Y+1, 
     retractall(minhacasa([_,_])),
-    assert(minhacasa([X,Y1])),
-    retractall(casa_anterior([_,_])),
-    assert(casa_anterior([X,Y])).
+    assert(minhacasa([X,Y1])).
 
 novaposicao(90):-
     minhacasa([X,Y]),
     Y==4,
     Y1 is Y, 
     retractall(minhacasa([_,_])),
-    assert(minhacasa([X,Y1])),
-    retractall(casa_anterior([_,_])),
-    assert(casa_anterior([X,Y])).
+    assert(minhacasa([X,Y1])).
 
 novaposicao(180):-
     minhacasa([X,Y]),
     X>1,
     X1 is X-1,
     retractall(minhacasa([_,_])),
-    assert(minhacasa([X1,Y])),
-    retractall(casa_anterior([_,_])),
-    assert(casa_anterior([X,Y])).
+    assert(minhacasa([X1,Y])).
 
 novaposicao(180):-
     minhacasa([X,Y]),
     X==1,
     X1 is X,
     retractall(minhacasa([_,_])),
-    assert(minhacasa([X1,Y])),
-    retractall(casa_anterior([_,_])),
-    assert(casa_anterior([X,Y])).
+    assert(minhacasa([X1,Y])).
 
 novaposicao(270):-
     minhacasa([X,Y]),
     Y>1,
     Y1 is Y-1,
     retractall(minhacasa([_,_])),
-    assert(minhacasa([X,Y1])),
-    retractall(casa_anterior([_,_])),
-    assert(casa_anterior([X,Y])).
+    assert(minhacasa([X,Y1])).
 
 novaposicao(270):-
     minhacasa([X,Y]), 
     Y==1,
     Y1 is Y,
     retractall(minhacasa([_,_])),
-    assert(minhacasa([X,Y1])),
-    retractall(casa_anterior([_,_])),
-    assert(casa_anterior([X,Y])).
-
+    assert(minhacasa([X,Y1])).
 
 % Casas adjacentes
 % A regra chamara outras regrar para somar e diminuir cara coordenada

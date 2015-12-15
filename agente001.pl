@@ -51,7 +51,7 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(casas_seguras(_)),
     assert(casas_seguras([[1,1]])), % lista inicial de casas seguras
     retractall(casas_visitadas(_)),
-    assert(casas_visitadas([1,1])), % lista inicial de casas visitadas
+    assert(casas_visitadas([[1,1]])), % lista inicial de casas visitadas
     retractall(casa_anterior(_)),
     assert(casa_anterior([_,_])).
 
@@ -74,10 +74,10 @@ run_agent(Percepcao, Acao) :-
     frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
     write('Frente: '),
     writeln(Frente),
-    casas_visitadas(Casas),
     casa_anterior(Z),
     write('Casa anterior: '),
     writeln(Z),
+    casas_visitadas(Casas),
     write('Casas visitadas: '),
     writeln(Casas),
     faz_casas_seguras(Posicao, L, Percepcao, Csa),
@@ -162,8 +162,9 @@ atualiza_casas_seguras(Csa):-
     retractall(casas_seguras(_)),
     assert(casas_seguras(NovaLista)).
 
-casasvisitadas :-  %regra para salvar casas visitadas%
+faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
     minhacasa(N),
+    
     casas_visitadas(M),
     union([N], M, O), %uniao entre casas ja salvas e nova casa%
     %list_to_set(O, P),

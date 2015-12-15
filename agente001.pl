@@ -151,13 +151,13 @@ faz_casas_seguras(Posicao, L, [no,no,_,_,_], Csa):- %casas que sao seguras, com 
     append([Posicao], L, Csb),
     list_to_set(Csb, Csa).
 
-faz_casas_seguras(Posicao, _, [_,_,_,_,_], Csa):-
+faz_casas_seguras(Posicao, _, [_,_,_,_,_], Csa):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
     Csa=[Posicao].
 
-atualiza_casas_seguras(Csa):-
+atualiza_casas_seguras(Csa):- % Sempre recebe a variavel Csa para adicionar na lista Cs criando uma nova lista, atualizando a lista de casas seguras
     casas_seguras(Cs),
     append(Csa, Cs, NovaLista1),
-    list_to_set(NovaLista1, NovaLista),
+    list_to_set(NovaLista1, NovaLista), %list_to_set para retirar casas repetidas da lista atualizada
     retractall(casas_seguras(_)),
     assert(casas_seguras(NovaLista)).
 

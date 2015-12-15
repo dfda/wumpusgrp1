@@ -74,6 +74,9 @@ run_agent(Percepcao, Acao) :-
     frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
     write('Frente: '),
     writeln(Frente),
+    faz_casa_anterior(Posicao),
+    casa_anterior(Ca),
+    write('Casa anterior: '),
     faz_casas_visitadas(Posicao),
     casas_visitadas(Cv),
     write('Casas visitadas: '),
@@ -103,7 +106,7 @@ estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso estej
     minhacasa([1,1]),
     wumpus(dead).
 
-estou_sentindo_uma_treta([_,_,_,_,yes]):- %Wumpus morto apos agente ouvir o grito%
+estou_sentindo_uma_treta([_,_,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
     retractall(wumpus(_)), 
     assert(wumpus(dead)),
     fail.

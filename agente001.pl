@@ -155,6 +155,13 @@ faz_casas_seguras(Posicao, L, [no,no,_,_,_], Csa):- %casas que sao seguras, com 
 faz_casas_seguras(Posicao, _, [_,_,_,_,_], Csa):-
     Csa=[Posicao].
 
+atualiza_casas_seguras(Csa):-
+    casas_seguras(Cs),
+    append(Csa, Cs, NovaLista1),
+    list_to_set(NovaLista1, NovaLista),
+    retractall(casas_seguras(_)),
+    assert(casas_seguras(NovaLista)).
+
 casasvisitadas :-  %regra para salvar casas visitadas%
     minhacasa(N),
     casas_visitadas(M),

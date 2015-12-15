@@ -41,17 +41,17 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(minhacasa(_)),
     assert(minhacasa([1,1])),       % casa inicial
     retractall(orientacao(_)),
-    assert(orientacao(0)),
+    assert(orientacao(0)),          % orientecao inicial
     retractall(agent_flecha(_)),
-    assert(agent_flecha(1)),
+    assert(agent_flecha(1)),        % numero inicial de flechas 
     retractall(wumpus(_)),
-    assert(wumpus(alive)),
-    retractall(ouro(_)),
-    assert(ouro(0)),
+    assert(wumpus(alive)),          % estado inicial do wumpus
+    retractall(ouro(_)), 
+    assert(ouro(0)),                % quantodade inicial de ouro
     retractall(casas_seguras(_)),
-    assert(casas_seguras([1,1])),
+    assert(casas_seguras([1,1])),   % lista inicial de casas seguras
     retractall(casas_visitadas(_)),
-    assert(casas_visitadas([1,1])),
+    assert(casas_visitadas([1,1])), % lista inicial de casas visitadas
     retractall(casa_anterior(_)),
     assert(casa_anterior([_,_])).
 
@@ -64,9 +64,9 @@ run_agent(Percepcao, Acao) :-
     agent_flecha(Flecha),nl, % Chamada para recolher o valor da variavel Flecha
     write('Numero de flechas: '), 
     writeln(Flecha),
-    ouro(N),
-    write('Numero de ouro: '),
-    writeln(N),
+    ouro(Q),                % Chamada para recolher quantidade do ouro %
+    write('Quantidade de ouro: '),
+    writeln(Q),
     minhacasa(Posicao), % Chamada da funcao minhacasa para saber a posicao atual
     write('Minha posicao: '),
     writeln(Posicao),
@@ -143,12 +143,13 @@ casas_seguras([no,no,_,_,_], Cs):- %casas que sao seguras, com base em casas adj
 casas_seguras([_,_,_,_,_], Cs) :-
     true.
 
-casasvisitadas :-
+casasvisitadas :-  %regra para salvar casas visitadas%
     minhacasa(N),
     casas_visitadas(M),
-    union([N], [M], P),
+    union([N], M, O), %uniao entre casas ja salvas e nova casa%
+    %list_to_set(O, P),
     retractall(casas_visitadas(_)),
-    assert(casas_visitadas(P)).
+    assert(casas_visitadas(O)).
 
 %caminho_seguro:- 
 %   minhacasa([X,Y]),

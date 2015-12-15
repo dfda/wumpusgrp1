@@ -73,10 +73,11 @@ run_agent(Percepcao, Acao) :-
     orientacao(Sentido),            % Chamada da funcao orientacao para saber a orientacao atual do agente
     write('Sentido do agente: '),
     writeln(Sentido),
-    frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
-    write('Frente: '),
+    faz_frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
+    casa_da_frente(Frente),
+    write('Casa frente: '),
     writeln(Frente),
-    faz_casa_anterior(Posicao),
+    %faz_casa_anterior(Posicao),
     casa_anterior(Ca),
     write('Casa anterior: '),
     faz_casas_visitadas(Posicao),

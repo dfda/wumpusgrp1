@@ -49,7 +49,7 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(ouro(_)), 
     assert(ouro(0)),                % quantodade inicial de ouro
     retractall(casas_seguras(_)),
-    assert(casas_seguras([1,1])),   % lista inicial de casas seguras
+    assert(casas_seguras([[1,1]])), % lista inicial de casas seguras
     retractall(casas_visitadas(_)),
     assert(casas_visitadas([1,1])), % lista inicial de casas visitadas
     retractall(casa_anterior(_)),
@@ -80,7 +80,7 @@ run_agent(Percepcao, Acao) :-
     writeln(Z),
     write('Casas visitadas: '),
     writeln(Casas),
-    casas_seguras(Percepcao, Cs),   % Chamada da funcao casa segura, dependendo da percepcao do agente
+    casas_seguras(Cs),   % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Cs),
     agent_flecha(Flecha),           % Chamada para recolher o valor da variavel Flecha

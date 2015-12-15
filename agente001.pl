@@ -75,7 +75,6 @@ run_agent(Percepcao, Acao) :-
     write('Sentido do agente: '),
     writeln(Sentido),
     faz_frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
-    casa_da_frente(Frente),
     write('Casa frente: '),
     writeln(Frente),
     casa_anterior(Ca),                 % Chamada para saber casa anterior 
@@ -202,33 +201,25 @@ atualiza_casas_suspeitas(Casasuspeitainicial):-
     retractall(casas_suspeitas(_)),
     assert(casas_suspeitas(NovaLista2)).
 
-faz_frente([X, Y], Ori, L):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
+faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
     Ori==0,
     X1 is X + 1,
-    L=[X1, Y],
-    retractall(casa_da_frente([_,_])),
-    assert(casa_da_frente(L)).
+    Frente=[X1, Y].
 
-faz_frente([X, Y], Ori, L):- % caso a orientacao do agente seja 90, a casa da frente sera com o 2o elemento da lista mais 1
+faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 90, a casa da frente sera com o 2o elemento da lista mais 1
     Ori==90,
     Y1 is Y + 1,
-    L=[X, Y1],
-    retractall(casa_da_frente([_,_])),
-    assert(casa_da_frente(L)).
+    Frente=[X, Y1].
 
-faz_frente([X, Y], Ori, L):- % caso a orientacao do agente seja 180, a casa da frente sera com o 1o elemento da lista menos 1
+faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 180, a casa da frente sera com o 1o elemento da lista menos 1
     Ori==180,
     X1 is X - 1,
-    L=[X1, Y],
-    retractall(casa_da_frente([_,_])),
-    assert(casa_da_frente(L)).
+    Frente=[X1, Y].
 
-faz_frente([X, Y], Ori, L):- % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
+faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
     Ori==270,
     Y1 is Y - 1,
-    L=[X, Y1],
-    retractall(casa_da_frente([_,_])),
-    assert(casa_da_frente(L)).
+    Frente=[X, Y1].
 
 novosentidoleft:- %muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(S),

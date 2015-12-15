@@ -80,8 +80,8 @@ run_agent(Percepcao, Acao) :-
     writeln(Z),
     write('Casas visitadas: '),
     writeln(Casas),
-    faz_casa_segura(Posicao, L, Percepcao, Csa),
-    atualiza_casa_segura(Csa),
+    faz_casas_seguras(Posicao, L, Percepcao, Csa),
+    atualiza_casas_seguras(Csa),
     casas_seguras(Cs),   % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Cs),

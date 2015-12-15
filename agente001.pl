@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agent_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casa_da_frente/1, casas_suspeitas/1]). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casas_suspeitas/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -54,8 +54,6 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     assert(casas_visitadas([[1,1]])), % lista inicial de casas visitadas
     retractall(casa_anterior(_)),
     assert(casa_anterior([1,1])),
-    retractall(casa_da_frente([_,_])),
-    assert(casa_da_frente([2,1])),
     retractall(casas_suspeitas(_)),
     assert(casas_suspeitas([])).
 

@@ -77,9 +77,10 @@ run_agent(Percepcao, Acao) :-
     casa_anterior(Z),
     write('Casa anterior: '),
     writeln(Z),
-    casas_visitadas(Casas),
+    faz_casas_visitadas(Posicao),
+    casas_visitadas(Cv),
     write('Casas visitadas: '),
-    writeln(Casas),
+    writeln(Cv),
     faz_casas_seguras(Posicao, L, Percepcao, Csa),
     atualiza_casas_seguras(Csa),
     casas_seguras(Cs),   % Chamada da funcao casa segura, dependendo da percepcao do agente
@@ -123,14 +124,12 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flec
 
 estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     orientacao(Ori),
-    novaposicao(Ori),
-    casasvisitadas.
+    novaposicao(Ori).
     %caminho_seguro.
 
 estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
      orientacao(Ori),
-     novaposicao(Ori),
-     casasvisitadas.
+     novaposicao(Ori).
     %caminho_seguro.
 
 %estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
@@ -163,13 +162,11 @@ atualiza_casas_seguras(Csa):-
     assert(casas_seguras(NovaLista)).
 
 faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
-    minhacasa(N),
-    
-    casas_visitadas(M),
-    union([N], M, O), %uniao entre casas ja salvas e nova casa%
-    %list_to_set(O, P),
+    casas_visitadas(Cv),
+    append([Posicao], Cv, NovaLista1),
+    list_to_set(NovaLista1, NovaLista),
     retractall(casas_visitadas(_)),
-    assert(casas_visitadas(O)).
+    assert(casas_visitadas(NovaLista)).
 
 %caminho_seguro:- 
 %   minhacasa([X,Y]),

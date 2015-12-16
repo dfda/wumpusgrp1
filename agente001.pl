@@ -303,12 +303,12 @@ faz_frente([X, Y], 270, Frente):-   % caso a orientacao do agente seja 270, a ca
 % Predicado para orientacao do agente
 novosentidoleft:- % muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(Sentido),
-    Novosentido is (S+90) mod 360,
+    Novosentido is (Sentido+90) mod 360,
     retractall(orientacao(_)),
     assert(orientacao(Novosentido)).
 novosentidoright:- % muda a memoria do sentido atual caso aconteca um turnright
     orientacao(Sentido),
-    Novosentido is (S-90) mod 360,
+    Novosentido is (Sentido-90) mod 360,
     retractall(orientacao(_)),
     assert(orientacao(Novosentido)).
 

@@ -1,21 +1,9 @@
 # wumpusgrp1
 Jogo Wumpus em Prolog
 
-## Autores:
-
-Alesson Renato Lopes Valenca (alessonrenato@gmail.com)
-
-Cassia Regina Franca Barbosa (caassiaregina@live.com)
-
-Rafael de Souza Pereira (rafaeldesouza51@hotmail.com)
-
-Wagner Lucas Ferreira da Silva (wagner46@live.com)
-
 ## Objetivo:
 
 Criar um agente001 dotado de inteligência para percorrer a caverna do wumpus atrás do ouro e não cair nos buracos nem ser pego pelo wumpus.
 
-## Orientador:
-
-Prof. Ruben Carlo Benante
-
+### Informações Gerais:
+Consultar a [wiki](https://github.com/alessonrenato/wumpusgrp1/wiki) do projeto.

@@ -269,6 +269,26 @@ calculacao([X1, Y], 90, [X2, Y], turnright):-
     X1<X2,
     novosentidoright.
 
+calculacao([X1, Y], 180, [X2, Y], turnleft):-
+    X1<X2,
+    novosentidoleft.
+
+calculacao([X1, Y], 180, [X2, Y], goforward):-
+    X1>X2,
+    orientacao(Ori),
+    minhacasa(MinhaCasa),
+    retractall(casa_anterior(_)),
+    assert(casa_anterior(MinhaCasa)),
+    novaposicao(Ori).
+
+calculacao([X, Y1], 180, [X, Y2], turnright):-
+    Y1<Y2,
+    novosentidoright.
+
+calculacao([X, Y1], 180, [X, Y2], turnleft):-
+    Y1>Y2,
+    novosentidoleft.
+
 tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     agente_flecha(X),
     X>0,

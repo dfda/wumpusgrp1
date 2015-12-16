@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agent_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casas_suspeitas/1]). %fatos dinamicos
+:- dynamic ([agent_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casas_suspeitas/1, ouro_avista/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -55,8 +55,9 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(casa_anterior(_)),
     assert(casa_anterior([1,1])),
     retractall(casas_suspeitas(_)),
-    assert(casas_suspeitas([])).
-
+    assert(casas_suspeitas([])),
+    retractall(ouro_avista(_)),
+    assert(ouro_avista([goforward, grab])).
 
 restart_agent :- 
     init_agent.
@@ -130,7 +131,16 @@ estou_sentindo_uma_treta([_,yes,_,_,_], Acao):-
     member(Frente, Casassuspeitas),
     Acao=turnleft,
     novosentidoleft.
- 
+
+estou_sentindo_uma_treta([no,yes,yes,_,_], Acao):-
+    casas_seguras(Cs),
+    faz_frente(rente),
+    member(Frente, Cs),
+    ouro_avista([A|S]),
+    retractall(ouro_avista(_)),
+    assert(ouro_avista(S)).
+
+
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
     ouro(1).

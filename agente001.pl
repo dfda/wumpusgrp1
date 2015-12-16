@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agent_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casas_suspeitas/1, ouro_avista/1]). %fatos dinamicos
+:- dynamic ([agente_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casas_suspeitas/1, ouro_avista/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -78,34 +78,34 @@ run_agent(Percepcao, Acao) :-
     faz_frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
     write('Casa da frente: '),
     writeln(Frente),
-    casa_anterior(Ca),                 % Chamada para saber casa anterior 
+    casa_anterior(Casaanterior),                 % Chamada para saber casa anterior 
     write('Casa anterior: '),
-    writeln(Ca),
+    writeln(Casaanterior),
     faz_casas_visitadas(Posicao),       % Chamada para criar casas visitadas
-    casas_visitadas(Cv),
+    casas_visitadas(Casasvisitadas),
     write('Casas visitadas: '),
-    writeln(Cv),
+    writeln(Casasvisitadas),
     faz_casas_seguras(Posicao, L, Percepcao, Csa),  % Chamada para criar casas seguras
     atualiza_casas_seguras(Csa),
-    casas_seguras(Cs),   % Chamada da funcao casa segura, dependendo da percepcao do agente
+    casas_seguras(Casasseguras),   % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
-    writeln(Cs),
+    writeln(Casasseguras),
     faz_casas_suspeitas(L, Cs, Casasuspeitainicial), % Chamada da funcao para casas suspeitas
     atualiza_casas_suspeitas(Casasuspeitainicial),
     casas_suspeitas(Casassuspeitas),
     write('Casas suspeitas: '),
     writeln(Casassuspeitas),
-    agent_flecha(Flecha),           % Chamada para recolher o valor da variavel Flecha
+    agente_flecha(Flecha),           % Chamada para recolher o valor da variavel Flecha
     write('Numero de flechas: '), 
     writeln(Flecha),
-    ouro(Q),                        % Chamada para recolher quantidade do ouro 
+    ouro(Quantidade),                        % Chamada para recolher quantidade do ouro 
     write('Quantidade de ouro: '),
-    writeln(Q),
-    wumpus(X),
-    write('Estado do Wumpus: '),
-    writeln(X),
+    writeln(Quantidade),
+    wumpus(Estado),
+    write('Estado do Wumpus: '), % Chamada para recolher estado do wumpus
+    writeln(Estado),
     estou_sentindo_uma_treta(Percepcao, Acao),
-    faz_casa_anterior(Ca).           % Chamada para avaliar se casa anterior esta correta%
+    faz_casa_anterior(Casaanterior).           % Chamada para avaliar se casa anterior esta correta%
     
 % Fatos (acoes que vao ser executadas)
 
@@ -127,8 +127,8 @@ estou_sentindo_uma_treta([_,_,_,_,yes], _):- %Wumpus morto apos agente ouvir o g
     fail.
 
 estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
-    agent_flecha(X), 
-    X==1, 
+    agente_flecha(X), 
+    X>0, 
     wumpus(vivo), 
     tiro.
 
@@ -171,9 +171,9 @@ estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
 estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho
     minhacasa(Posicao),
     orientacao(Sentido),
-    casas_seguras(Cs),
+    casas_seguras(Casasseguras),
     faz_frente(Posicao, Sentido, Frente),
-    member(Frente, Cs), %vai fazer caso casa da frente seja membro de casas seguras
+    member(Frente, Casasseguras), %vai fazer caso casa da frente seja membro de casas seguras
     ouro_avista([A|S]),
     Acao = A,
     retractall(ouro_avista(_)),
@@ -220,11 +220,11 @@ calculacao([X1, Y1], 0, [X2, Y2], Acao):-
     novosentidoright.
 
 tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
-    agent_flecha(X),
+    agente_flecha(X),
     X>0,
     X1 is X-1,
-    retractall(agent_flecha(_)),
-    assert(agent_flecha(X1)).
+    retractall(agente_flecha(_)),
+    assert(agente_flecha(X1)).
 
 % Predicados para as casas seguras
 faz_casas_seguras(Posicao, L, [no,no,_,_,_], Csa):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
@@ -250,13 +250,13 @@ faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
     assert(casas_visitadas(NovaLista)).
 
 % Predicados para a casa anterior
-faz_casa_anterior(Ca) :-    %regra para mudar casa anterior caso agente nao mude e casa
+faz_casa_anterior(Casaanterior) :-    %regra para mudar casa anterior caso agente nao mude e casa
     minhacasa([X,Y]),
     casa_anterior([L,M]),
     Y==M,
     X==L,
     retractall(casa_anterior(_)),
-    assert(casa_anterior(Ca)).
+    assert(casa_anterior(Casaanterior)).
 
 faz_casa_anterior(_) :-  %regra pra que seja sempre verdade e acao seja retornada para o mundo%
    true.
@@ -302,15 +302,15 @@ faz_frente([X, Y], 270, Frente):-   % caso a orientacao do agente seja 270, a ca
 
 % Predicado para orientacao do agente
 novosentidoleft:- % muda a memoria do sentido atual caso aconteca um turnleft
-    orientacao(S),
-    O is (S+90) mod 360,
+    orientacao(Sentido),
+    Novosentido is (S+90) mod 360,
     retractall(orientacao(_)),
-    assert(orientacao(O)).
+    assert(orientacao(Novosentido)).
 novosentidoright:- % muda a memoria do sentido atual caso aconteca um turnright
-    orientacao(S),
-    O is (S-90) mod 360,
+    orientacao(Sentido),
+    Novosentido is (S-90) mod 360,
     retractall(orientacao(_)),
-    assert(orientacao(O)).
+    assert(orientacao(Novosentido)).
 
 % Predicados para atualizar a posicao atual do agente
 novaposicao(0):- 

@@ -118,17 +118,24 @@ run_agent(Percepcao, Acao) :-
 % Acoes: goforward, turnright, turnleft, grab, climb, shoot
 % Listas: casas_visitadas(Casasvisitadas), casas_seguras(Casasseguras), casas_suspeitas(Casassuspeitas)
 
-estou_sentindo_uma_treta([_,_,_,_,_], Acao):-
-    faz_alvo(Alvo),
-    minhacasa(Posicao),
-    orientacao(Sentido),
-    calculacao(Posicao, Sentido, Alvo, Acao).
+%estou_sentindo_uma_treta([_,_,_,_,_], Acao):-
+%   faz_alvo(Alvo),
+%   minhacasa(Posicao),
+%   orientacao(Sentido),
+%   calculacao(Posicao, Sentido, Alvo, Acao).
 
 % grab (prioridade máxima do agente) [0]
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
     retractall(ouro(_)),
     assert(ouro(1)),
     write('Estou com ouro !!!'),nl.
+
+% shoot (prioridade)
+estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
+    agente_flecha(X), 
+    X>0, 
+    wumpus(vivo), 
+    tiro.
 
 % climbs (prioridade) [1]
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
@@ -179,12 +186,6 @@ estou_sentindo_uma_treta([_,yes,_,_,yes], _):- %Wumpus morto apos agente ouvir o
     write('Ja acabou, Wumpus?'), nl,
     fail.
 
-% shoot (prioridade) [2]
-estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
-    agente_flecha(X), 
-    X>0, 
-    wumpus(vivo), 
-    tiro.
 
 % goforwards (prioridade) [3]
 estou_sentindo_uma_treta([_,yes,_,no,_], goforward):-

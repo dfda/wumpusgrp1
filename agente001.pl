@@ -111,7 +111,7 @@ run_agent(Percepcao, Acao) :-
 
 % Percepcoes: [Fedor,Vento,Brilho,Trombada,Grito]
 % Acoes: goforward, turnright, turnleft, grab, climb, shoot
-% Listas: casas_visitadas(Cv), casas_seguras(Cs), casas_suspeitas(Casassuspeitas)
+% Listas: casas_visitadas(Casasvisitadas), casas_seguras(Casasseguras), casas_suspeitas(Casassuspeitas)
 
 estou_sentindo_uma_treta([_,no,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
     retractall(wumpus(_)), 
@@ -139,6 +139,14 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flec
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
     ouro(1).
+
+estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1] 
+    minhacasa([1,1]), 
+    adjacentes([1,1], L),
+    casas_suspeitas(Casassuspeitas), 
+    subtract(L, Casassuspeitas, Resto),
+    Resto == [],  
+    write(' Eu nao vou morer aqui, xau! '), nl.
 
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus
     minhacasa([1,1]),

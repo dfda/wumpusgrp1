@@ -131,7 +131,20 @@ estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber
     write('Estou com ouro !!!'),nl.
 
 % shoot (prioridade)
-estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
+estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
+    agente_flecha(X), 
+    X>0, 
+    wumpus(vivo), 
+    tiro,
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, Sentido, Frente),
+    casas_seguras(Casasseguras),
+    append([Frente], Casasseguras, CasasSeg1),
+    retractall(casas_seguras(_)),
+    assert(casas_seguras(CasasSeg1)).
+    
+estou_sentindo_uma_treta([yes,yes,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
     agente_flecha(X), 
     X>0, 
     wumpus(vivo), 
@@ -142,13 +155,13 @@ estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possu
     minhacasa([1,1]),
     ouro(1).
 
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1] 
-    minhacasa([1,1]), 
-    adjacentes([1,1], L),
-    casas_suspeitas(Casassuspeitas), 
-    subtract(L, Casassuspeitas, Resto),
-    Resto == [],  
-    write('Eu nao vou morrer aqui, xau! '), nl.
+%estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1] 
+%   minhacasa([1,1]), 
+%   adjacentes([1,1], L),
+%   casas_suspeitas(Casassuspeitas), 
+%   subtract(L, Casassuspeitas, Resto),
+%   Resto == [],  
+%    write('Eu nao vou morrer aqui, xau! '), nl.
 
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus
     minhacasa([1,1]),
@@ -167,11 +180,10 @@ estou_sentindo_uma_treta([_,no,_,_,yes], _):- %Wumpus morto apos agente ouvir o 
     retractall(wumpus(_)), 
     assert(wumpus(morto)),
     minhacasa(Posicao),
-    orientacao(Sentido),
     casas_seguras(Casasseguras),
     casas_suspeitas(Casassuspeitas),
-    faz_frente(Posicao, Sentido, Frente),
-    append([Frente], Casasseguras, Casasseguras1),
+    adjacentes(Posicao, L),
+    append(L, Casasseguras, Casasseguras1),
     retractall(casas_seguras(_)),
     assert(casas_seguras(Casasseguras1)),
     subtract(Casassuspeitas, Casasseguras1, Novassuspeitas),

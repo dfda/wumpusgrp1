@@ -53,11 +53,11 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(casas_visitadas(_)),
     assert(casas_visitadas([[1,1]])), % lista inicial de casas visitadas
     retractall(casa_anterior(_)),
-    assert(casa_anterior([1,1])),
+    assert(casa_anterior([1,1])),    % lista inicial de casa anterior
     retractall(casas_suspeitas(_)),
-    assert(casas_suspeitas([])),
+    assert(casas_suspeitas([])),    % lista inicial de casa suspeita
     retractall(ouro_avista(_)),
-    assert(ouro_avista([goforward, grab])).
+    assert(ouro_avista([goforward, grab])). %lista a ser executada quando agente vir brilho
 
 restart_agent :- 
     init_agent.
@@ -90,7 +90,7 @@ run_agent(Percepcao, Acao) :-
     casas_seguras(Casasseguras),   % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Casasseguras),
-    faz_casas_suspeitas(L, Cs, Casasuspeitainicial), % Chamada da funcao para casas suspeitas
+    faz_casas_suspeitas(L, Casasseguras, Casasuspeitainicial), % Chamada da funcao para casas suspeitas
     atualiza_casas_suspeitas(Casasuspeitainicial),
     casas_suspeitas(Casassuspeitas),
     write('Casas suspeitas: '),
@@ -235,8 +235,8 @@ faz_casas_seguras(Posicao, _, [_,_,_,_,_], Csa):- % Caso o agente sinta algo, a 
     Csa=[Posicao].
 
 atualiza_casas_seguras(Csa):- % Sempre recebe a variavel Csa para adicionar na lista Cs criando uma nova lista, atualizando a lista de casas seguras
-    casas_seguras(Cs),
-    append(Csa, Cs, NovaLista1),
+    casas_seguras(Casasseguras),
+    append(Csa, Casasseguras, NovaLista1),
     list_to_set(NovaLista1, NovaLista), %list_to_set para retirar casas repetidas da lista atualizada
     retractall(casas_seguras(_)),
     assert(casas_seguras(NovaLista)).
@@ -262,16 +262,16 @@ faz_casa_anterior(_) :-  %regra pra que seja sempre verdade e acao seja retornad
    true.
 
 % Predicados para as casas suspeitas
-faz_casas_suspeitas(L, Cs, Casasuspeitainicial):-
-    intersection(Cs, L, L1),
+faz_casas_suspeitas(L, Casasseguras, Casasuspeitainicial):-
+    intersection(Casasseguras, L, L1),
     subtract(L, L1, Casasuspeitainicial).
 
 atualiza_casas_suspeitas(Casasuspeitainicial):-
-    casas_seguras(Cs),
+    casas_seguras(Casasseguras),
     casas_suspeitas(Casassuspeitas),
     append(Casasuspeitainicial, Casassuspeitas, NovaLista1),
     list_to_set(NovaLista1, NovaLista),
-    subtract(NovaLista, Cs, NovaLista2),
+    subtract(NovaLista, Casasseguras, NovaLista2),
     retractall(casas_suspeitas(_)),
     assert(casas_suspeitas(NovaLista2)).
 

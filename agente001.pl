@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agente_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casas_suspeitas/1, ouro_avista/1]). %fatos dinamicos
+:- dynamic ([agente_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casas_suspeitas/1, ouro_avista/1, ponto_de_decisao/1, alvo/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -57,7 +57,11 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(casas_suspeitas(_)),
     assert(casas_suspeitas([])),    % lista inicial de casa suspeita
     retractall(ouro_avista(_)),
-    assert(ouro_avista([goforward, grab])). %lista a ser executada quando agente vir brilho
+    assert(ouro_avista([goforward, grab])), %lista a ser executada quando agente vir brilho
+    retractall(ponto_de_decisao(_)),
+    assert(ponto_de_decisao([])),
+    retractall(alvo(_)),
+    assert(alvo([])).
 
 restart_agent :- 
     init_agent.
@@ -105,6 +109,9 @@ run_agent(Percepcao, Acao) :-
     write('Estado do Wumpus: '), % Chamada para recolher estado do wumpus
     writeln(Estado),
     estou_sentindo_uma_treta(Percepcao, Acao),
+    ponto_de_decisao(Decisao),
+    write('Pontos de decisao: '),
+    writeln(Decisao),
     faz_casa_anterior(Casaanterior).           % Chamada para avaliar se casa anterior esta correta%
     
 % Fatos (acoes que vao ser executadas)
@@ -112,6 +119,12 @@ run_agent(Percepcao, Acao) :-
 % Percepcoes: [Fedor,Vento,Brilho,Trombada,Grito]
 % Acoes: goforward, turnright, turnleft, grab, climb, shoot
 % Listas: casas_visitadas(Casasvisitadas), casas_seguras(Casasseguras), casas_suspeitas(Casassuspeitas)
+
+estou_sentindo_uma_treta([_,_,_,_,_], Acao):-
+    faz_alvo(Alvo),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    calculacao(Posicao, Sentido, Alvo, Acao).
 
 % grab (prioridade máxima do agente) [0]
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
@@ -196,9 +209,20 @@ estou_sentindo_uma_treta([yes,_,_,no,_], goforward):-
     assert(casa_anterior(Posicao)),
     novaposicao(Sentido).
 
+estou_sentindo_uma_treta([_,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
+     orientacao(Ori),
+     minhacasa(MinhaCasa),
+     retractall(casa_anterior(_)),
+     assert(casa_anterior(MinhaCasa)),
+     novaposicao(Ori).
+
 % oritentacoes (prioridade) [4]
 estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):- % Agente vira caso sinta brisa e a casa da frente for suspeita
     minhacasa(Posicao),
+    ponto_de_decisao(Decisao),
+    append([Posicao], Decisao, NovaLista),
+    retractall(ponto_de_decisao(_)),
+    assert(ponto_de_decisao(NovaLista)),
     orientacao(Sentido),
     casas_suspeitas(Casassuspeitas),
     faz_frente(Posicao, Sentido, Frente),
@@ -206,9 +230,23 @@ estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):- % Agente vira caso sinta bri
     novosentidoleft.
 
 estou_sentindo_uma_treta([_,_,_,yes,_], turnright):-
-    minhacasa([1,_]),
+    minhacasa(Posicao),
     orientacao(180),
+    ponto_de_decisao(Decisao),
+    append([Posicao], Decisao, NovaLista1),
+    list_to_set(NovaLista1, NovaLista),
+    retractall(ponto_de_decisao(_)),
+    assert(ponto_de_decisao(NovaLista)),
     novosentidoright.
+
+estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
+    minhacasa(Posicao),
+    ponto_de_decisao(Decisao),
+    append([Posicao], Decisao, NovaLista1),
+    list_to_set(NovaLista1, NovaLista),
+    retractall(ponto_de_decisao(_)),
+    assert(ponto_de_decisao(NovaLista)),
+    novosentidoleft.
 
 %estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho
 %   minhacasa(Posicao),
@@ -221,17 +259,19 @@ estou_sentindo_uma_treta([_,_,_,yes,_], turnright):-
 %   retractall(ouro_avista(_)),
 %   assert(ouro_avista(S)).
 
-estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-    novosentidoleft.
 
-estou_sentindo_uma_treta([_,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
-     orientacao(Ori),
-     minhacasa(MinhaCasa),
-     retractall(casa_anterior(_)),
-     assert(casa_anterior(MinhaCasa)),
-     novaposicao(Ori).
 
 % Funcoes
+faz_alvo(AlvoP):-
+    casas_seguras(Cs),
+    casas_visitadas(Cv),
+    subtract(Cs, Cv, [H|T]),
+    AlvoP=H,
+    retractall(alvo(_)),
+    assert(alvo(T)),
+    write('Alvo: '),
+    writeln(AlvoP).
+
 % Calculacao sentido 0
 calculacao([X1, Y], 0, [X2, Y], goforward):-
     X1<X2,

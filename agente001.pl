@@ -197,13 +197,18 @@ estou_sentindo_uma_treta([yes,_,_,no,_], goforward):-
     novaposicao(Sentido).
 
 % oritentacoes (prioridade) [4]
-estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
+estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):- % Agente vira caso sinta brisa e a casa da frente for suspeita
     minhacasa(Posicao),
     orientacao(Sentido),
     casas_suspeitas(Casassuspeitas),
     faz_frente(Posicao, Sentido, Frente),
     member(Frente, Casassuspeitas),
     novosentidoleft.
+
+estou_sentindo_uma_treta([_,_,_,yes,_], turnright):-
+    minhacasa([1,_]),
+    orientacao(180),
+    novosentidoright.
 
 %estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho
 %   minhacasa(Posicao),
@@ -225,7 +230,6 @@ estou_sentindo_uma_treta([_,no,no,no,no], goforward):- %agente segue em frente c
      retractall(casa_anterior(_)),
      assert(casa_anterior(MinhaCasa)),
      novaposicao(Ori).
-
 
 % Funcoes
 % Calculacao sentido 0
@@ -270,6 +274,7 @@ calculacao([X1, Y], 90, [X2, Y], turnright):-
     X1<X2,
     novosentidoright.
 
+% Calculacao sentido 180
 calculacao([X1, Y], 180, [X2, Y], turnleft):-
     X1<X2,
     novosentidoleft.

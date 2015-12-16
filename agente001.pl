@@ -245,6 +245,29 @@ calculacao([X1, Y1], 0, [X2, Y2], Acao):-
     Acao=turnright,
     novosentidoright.
 
+calculacao([X1, Y1], 90, [X2, Y2], Acao):-
+    Y1<Y2,
+    X1==X2,
+    Acao=goforwad.
+
+calculacao([X1, Y1], 90, [X2, Y2], Acao):-
+    Y1>Y2,
+    X1==X2,
+    Acao=turnleft,
+    novosentidoleft.
+
+calculacao([X1, Y1], 90, [X2, Y2], Acao):-
+    Y1==Y2,
+    X1>X2,
+    Acao=turnleft,
+    novosentidoleft.
+
+calculacao([X1, Y1], 90, [X2, Y2], Acao):-
+    Y1==Y2,
+    X1<X2,
+    Acao=turnright,
+    novosentidoright.
+
 tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     agente_flecha(X),
     X>0,

@@ -132,10 +132,10 @@ estou_sentindo_uma_treta([_,yes,_,_,_], Acao):-
     Acao=turnleft,
     novosentidoleft.
 
-estou_sentindo_uma_treta([no,yes,yes,_,_], Acao):-
+estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho 
     casas_seguras(Cs),
     faz_frente(rente),
-    member(Frente, Cs),
+    member(Frente, Cs), %vai fazer caso casa da frente seja membro de casas seguras
     ouro_avista([A|S]),
     retractall(ouro_avista(_)),
     assert(ouro_avista(S)).

@@ -241,39 +241,32 @@ calculacao([X1, Y], 0, [X2, Y], turnleft):-
     X1>X2,
     novosentidoleft.
 
-calculacao([X1, Y1], 0, [X2, Y2], Acao):-
+calculacao([X, Y1], 0, [X, Y2], turnleft):-
     Y1<Y2,
-    X1==X2,
-    Acao=turnleft,
     novosentidoleft.
 
-calculacao([X1, Y1], 0, [X2, Y2], Acao):-
+calculacao([X, Y1], 0, [X, Y2], turnright):-
     Y1>Y2,
-    X1==X2,
-    Acao=turnright,
     novosentidoright.
 
-calculacao([X1, Y1], 90, [X2, Y2], Acao):-
+calculacao([X, Y1], 90, [X, Y2], goforward):-
     Y1<Y2,
-    X1==X2,
-    Acao=goforwad.
+    orientacao(Ori),
+    minhacasa(MinhaCasa),
+    retractall(casa_anterior(_)),
+    assert(casa_anterior(MinhaCasa)),
+    novaposicao(Ori).
 
-calculacao([X1, Y1], 90, [X2, Y2], Acao):-
+calculacao([X, Y1], 90, [X, Y2], turnleft):-
     Y1>Y2,
-    X1==X2,
-    Acao=turnleft,
     novosentidoleft.
 
-calculacao([X1, Y1], 90, [X2, Y2], Acao):-
-    Y1==Y2,
+calculacao([X1, Y], 90, [X2, Y], turnleft):-
     X1>X2,
-    Acao=turnleft,
     novosentidoleft.
 
-calculacao([X1, Y1], 90, [X2, Y2], Acao):-
-    Y1==Y2,
+calculacao([X1, Y], 90, [X2, Y], turnright):-
     X1<X2,
-    Acao=turnright,
     novosentidoright.
 
 tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%

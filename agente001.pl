@@ -152,11 +152,19 @@ estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas
     casas_suspeitas(Casassuspeitas), 
     subtract(L, Casassuspeitas, Resto),
     Resto == [],  
-    write(' Eu nao vou morer aqui, xau! '), nl.
+    write('Eu nao vou morrer aqui, xau! '), nl.
 
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus
     minhacasa([1,1]),
     wumpus(morto).
+
+estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas seguras tenham sido visitadas
+    minhacasa([1,1]),
+    casas_visitadas(Casasvisitadas),
+    casas_seguras(Casasseguras),
+    subtract(Casasseguras, Casasvisitadas, Resto),
+    Resto == [],  
+    write('Ja visitei todos os lugares seguros, vou nessa! '), nl.
 
 estou_sentindo_uma_treta([_,yes,_,no,_], goforward):-
     minhacasa(Posicao),

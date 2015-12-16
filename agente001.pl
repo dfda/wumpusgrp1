@@ -89,7 +89,7 @@ run_agent(Percepcao, Acao) :-
     casas_seguras(Cs),   % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Cs),
-    faz_casas_suspeitas(L, Cs, Casasuspeitainicial),
+    faz_casas_suspeitas(L, Cs, Casasuspeitainicial), % Chamada da funcao para casas suspeitas
     atualiza_casas_suspeitas(Casasuspeitainicial),
     casas_suspeitas(Casassuspeitas),
     write('Casas suspeitas: '),
@@ -104,6 +104,33 @@ run_agent(Percepcao, Acao) :-
     faz_casa_anterior(Ca).           % Chamada para avaliar se casa anterior esta correta%
     
 % Fatos (acoes que vao ser executadas)
+
+% Percepcoes: [Fedor,Vento,Brilho,Trombada,Grito]
+% Acoes: goforward, turnright, turnleft, grab, climb, shoot
+% Listas: casas_visitadas(Cv), casas_seguras(Cs), casas_suspeitas(Casassuspeitas)
+
+estou_sentindo_uma_treta([_,yes,_,no,_], Acao):-
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    casas_seguras(Cs),
+    faz_frente(Posicao, Sentido, Frente),
+    member(Frente, Cs),
+    write('Minha frente, nao sei se eh segura: '),
+    writeln(Frente),
+    Acao=goforward,
+    retractall(casa_anterior(_)),
+    assert(casa_anterior(Posicao)),
+    novaposicao(Sentido).
+
+estou_sentindo_uma_treta([_,yes,_,_,_], Acao):-
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    casas_suspeitas(Casassuspeitas),
+    faz_frente(Posicao, Sentido, Frente),
+    member(Frente, Casassuspeitas),
+    Acao=turnleft,
+    novosentidoleft.
+ 
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
     ouro(1).
@@ -115,6 +142,7 @@ estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso estej
 estou_sentindo_uma_treta([_,_,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
     retractall(wumpus(_)), 
     assert(wumpus(dead)),
+    write('Wumpus morto !!!'), nl,
     fail.
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
@@ -124,24 +152,21 @@ estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flec
     agent_flecha(X), 
     X==1, 
     wumpus(alive), 
-    tiro,
-    write('Wumpus morto !!!'), nl.
+    tiro.
 
-estou_sentindo_uma_treta([_,_,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
+/*estou_sentindo_uma_treta([no,no,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     orientacao(Ori),
-    minhacasa([X,Y]),
+    minhacasa(MinhaCasa),
     retractall(casa_anterior(_)),
-    assert(casa_anterior([X,Y])),
-    novaposicao(Ori).
+    assert(casa_anterior(MinhaCasa)),
+    novaposicao(Ori).*/
 
 estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
      orientacao(Ori),
-     minhacasa([X]),
+     minhacasa(MinhaCasa),
      retractall(casa_anterior(_)),
-     assert(casa_anterior([X])),
+     assert(casa_anterior(MinhaCasa)),
      novaposicao(Ori).
-
-%estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
 
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
     retractall(ouro(_)),
@@ -217,15 +242,21 @@ faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 0, a casa d
     X1 is X + 1,
     Frente=[X1, Y].
 
+faz_frente([X, Y], Ori, Frente):- % caso a casa de frente seja invalida, a casa da frente e' a mesma casa que o agente esta
+    Ori==90,
+    Y1 is Y + 1,
+    Y1>4,
+    Frente=[X, Y].
+
 faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 90, a casa da frente sera com o 2o elemento da lista mais 1
     Ori==90,
     Y1 is Y + 1,
     Frente=[X, Y1].
 
-faz_frente([X, Y], Ori, Frente):- % caso a casa de frente seja invalida, a casa da frente e' a mesma casa que o agente esta
-    Ori==90,
-    Y1 is Y + 1,
-    Y1>4,
+faz_frente([X, Y], Ori, Frente):- % casa invalida, permanece a casa atual como casa da frente
+    Ori==180,
+    X1 is X - 1,
+    X1<1,
     Frente=[X, Y].
 
 faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 180, a casa da frente sera com o 1o elemento da lista menos 1
@@ -234,21 +265,15 @@ faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 180, a casa
     Frente=[X1, Y].
 
 faz_frente([X, Y], Ori, Frente):- % casa invalida, permanece a casa atual como casa da frente
-    Ori==180,
-    X1 is X - 1,
-    X1<1,
+    Ori==270,
+    Y1 is Y - 1,
+    Y1<1,
     Frente=[X, Y].
 
 faz_frente([X, Y], Ori, Frente):- % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
     Ori==270,
     Y1 is Y - 1,
     Frente=[X, Y1].
-
-faz_frente([X, Y], Ori, Frente):- % casa invalida, permanece a casa atual como casa da frente
-    Ori==270,
-    Y1 is Y - 1,
-    Y1<1,
-    Frente=[X, Y].
 
 % Predicado para orientacao do agente
 novosentidoleft:- %muda a memoria do sentido atual caso aconteca um turnleft

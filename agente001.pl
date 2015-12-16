@@ -98,7 +98,7 @@ run_agent(Percepcao, Acao) :-
     agente_flecha(Flecha),           % Chamada para recolher o valor da variavel Flecha
     write('Numero de flechas: '), 
     writeln(Flecha),
-    ouro(Quantidade),                        % Chamada para recolher quantidade do ouro 
+    ouro(Quantidade)ta é a grande sacada do jogoEsta é a grande sacada do jogo                        % Chamada para recolher quantidade do ouro 
     write('Quantidade de ouro: '),
     writeln(Quantidade),
     wumpus(Estado),
@@ -228,7 +228,7 @@ estou_sentindo_uma_treta([_,no,no,no,no], goforward):- %agente segue em frente c
 
 
 % Funcoes
-
+% Calculacao sentido 0
 calculacao([X1, Y], 0, [X2, Y], goforward):-
     X1<X2,
     orientacao(Ori),
@@ -249,6 +249,7 @@ calculacao([X, Y1], 0, [X, Y2], turnright):-
     Y1>Y2,
     novosentidoright.
 
+% Calculacao sentido 90
 calculacao([X, Y1], 90, [X, Y2], goforward):-
     Y1<Y2,
     orientacao(Ori),
@@ -268,6 +269,27 @@ calculacao([X1, Y], 90, [X2, Y], turnleft):-
 calculacao([X1, Y], 90, [X2, Y], turnright):-
     X1<X2,
     novosentidoright.
+
+% Calculacao 270
+calculacao([X1, Y], 270, [X2, Y], turnleft):-
+    X1<X2,
+    novosentidoleft.
+
+calculacao([X1, Y], 270, [X2, Y], turnright):-
+    X1>X2,
+    novosentidoright.
+
+calculacao([X, Y1], 270, [X, Y2], goforward):-
+    Y2<Y1,
+    orientacao(Ori),
+    minhacasa(MinhaCasa),
+    retractall(casa_anterior(_)),
+    assert(casa_anterior(MinhaCasa)),
+    novaposicao(Ori).
+
+calculacao([X, Y1], 270, [X, Y2], turnleft):-
+    Y2>Y1,
+    novosentidoleft.
 
 tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     agente_flecha(X),

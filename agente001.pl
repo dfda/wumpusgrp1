@@ -328,27 +328,23 @@ atualiza_casas_suspeitas(Casasuspeitainicial):-
 % Predicados para a casa da frente
 faz_frente([4, Y], 0, [4, Y]).      % casa da extremidade, a casa da frente e' a mesma casa que o agente esta
     
-faz_frente([X, Y], 0, Frente):-   % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
-    X1 is X + 1,
-    Frente=[X1, Y].
+faz_frente([X, Y], 0, [X1, Y]):-   % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
+    X1 is X + 1.
 
 faz_frente([X, 4], 90, [X, 4]).     % caso da extremidade, a casa da frente e' a mesma casa que o agente esta
     
-faz_frente([X, Y], 90, Frente):-   % caso a orientacao do agente seja 90, a casa da frente sera com o 2o elemento da lista mais 1
-    Y1 is Y + 1,
-    Frente=[X, Y1].
+faz_frente([X, Y], 90, [X, Y1]):-   % caso a orientacao do agente seja 90, a casa da frente sera com o 2o elemento da lista mais 1
+    Y1 is Y + 1.
 
 faz_frente([1, Y], 180, [1, Y]).    % casa invalida, permanece a casa atual como casa da frente
     
-faz_frente([X, Y], 180, Frente):-   % caso a orientacao do agente seja 180, a casa da frente sera com o 1o elemento da lista menos 1
-    X1 is X - 1,
-    Frente=[X1, Y].
+faz_frente([X, Y], 180, [X1, Y]):-   % caso a orientacao do agente seja 180, a casa da frente sera com o 1o elemento da lista menos 1
+    X1 is X - 1.
 
 faz_frente([X, 1], 270, [X, 1]).    % casa invalida, permanece a casa atual como casa da frente
     
-faz_frente([X, Y], 270, Frente):-   % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
-    Y1 is Y - 1,
-    Frente=[X, Y1].
+faz_frente([X, Y], 270, [X, Y1]):-   % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
+    Y1 is Y - 1.
 
 % Predicado para orientacao do agente
 novosentidoleft:- % muda a memoria do sentido atual caso aconteca um turnleft

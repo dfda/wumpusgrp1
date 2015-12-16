@@ -110,26 +110,22 @@ run_agent(Percepcao, Acao) :-
 % Acoes: goforward, turnright, turnleft, grab, climb, shoot
 % Listas: casas_visitadas(Cv), casas_seguras(Cs), casas_suspeitas(Casassuspeitas)
 
-estou_sentindo_uma_treta([_,yes,_,no,_], Acao):-
+estou_sentindo_uma_treta([_,yes,_,no,_], goforward):-
     minhacasa(Posicao),
     orientacao(Sentido),
     casas_seguras(Cs),
     faz_frente(Posicao, Sentido, Frente),
     member(Frente, Cs),
-    write('Minha frente, nao sei se eh segura: '),
-    writeln(Frente),
-    Acao=goforward,
     retractall(casa_anterior(_)),
     assert(casa_anterior(Posicao)),
     novaposicao(Sentido).
 
-estou_sentindo_uma_treta([_,yes,_,_,_], Acao):-
+estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
     minhacasa(Posicao),
     orientacao(Sentido),
     casas_suspeitas(Casassuspeitas),
     faz_frente(Posicao, Sentido, Frente),
     member(Frente, Casassuspeitas),
-    Acao=turnleft,
     novosentidoleft.
 
 estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho 
@@ -184,6 +180,30 @@ estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber
     write('Estou com ouro !!!'),nl.
 
 % Funcoes
+
+calculacao([X1, Y1], 0, [X2, Y2], Acao):-
+    Y1==Y2,
+    X1<X2,
+    Acao=goforwad.
+
+calculacao([X1, Y1], 0, [X2, Y2], Acao):-
+    Y1==Y2,
+    X1>X2,
+    Acao=turnleft,
+    novosentidoleft.
+
+calculacao([X1, Y1], 0, [X2, Y2], Acao):-
+    Y1<Y2,
+    X1==X2,
+    Acao=turnleft,
+    novosentidoleft.
+
+calculacao([X1, Y1], 0, [X2, Y2], Acao):-
+    Y1>Y2,
+    X1==X2,
+    Acao=turnright,
+    novosentidoright.
+
 tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     agent_flecha(X),
     X>0,

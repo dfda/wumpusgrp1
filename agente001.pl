@@ -229,15 +229,16 @@ estou_sentindo_uma_treta([_,no,no,no,no], goforward):- %agente segue em frente c
 
 % Funcoes
 
-calculacao([X1, Y1], 0, [X2, Y2], Acao):-
-    Y1==Y2,
+calculacao([X1, Y], 0, [X2, Y], goforward):-
     X1<X2,
-    Acao=goforwad.
+    orientacao(Ori),
+    minhacasa(MinhaCasa),
+    retractall(casa_anterior(_)),
+    assert(casa_anterior(MinhaCasa)),
+    novaposicao(Ori).
 
-calculacao([X1, Y1], 0, [X2, Y2], Acao):-
-    Y1==Y2,
+calculacao([X1, Y], 0, [X2, Y], turnleft):-
     X1>X2,
-    Acao=turnleft,
     novosentidoleft.
 
 calculacao([X1, Y1], 0, [X2, Y2], Acao):-

@@ -42,8 +42,8 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     assert(minhacasa([1,1])),       % casa inicial
     retractall(orientacao(_)),
     assert(orientacao(0)),          % orientecao inicial
-    retractall(agent_flecha(_)),
-    assert(agent_flecha(1)),        % numero inicial de flechas 
+    retractall(agente_flecha(_)),
+    assert(agente_flecha(1)),        % numero inicial de flechas 
     retractall(wumpus(_)),
     assert(wumpus(vivo)),          % estado inicial do wumpus
     retractall(ouro(_)), 
@@ -113,16 +113,20 @@ run_agent(Percepcao, Acao) :-
 % Acoes: goforward, turnright, turnleft, grab, climb, shoot
 % Listas: casas_visitadas(Cv), casas_seguras(Cs), casas_suspeitas(Casassuspeitas)
 
-estou_sentindo_uma_treta([_,_,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
+estou_sentindo_uma_treta([_,no,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
     retractall(wumpus(_)), 
     assert(wumpus(morto)),
     minhacasa(Posicao),
     orientacao(Sentido),
     casas_seguras(Casasseguras),
+    casas_suspeitas(Casassuspeitas),
     faz_frente(Posicao, Sentido, Frente),
     append([Frente], Casasseguras, Casasseguras1),
     retractall(casas_seguras(_)),
     assert(casas_seguras(Casasseguras1)),
+    subtract(Casassuspeitas, Casasseguras1, Novassuspeitas),
+    retractall(casas_suspeitas(_)),
+    assert(casas_suspeitas(Novassuspeitas)),
     write('Wumpus morto !!!'), nl,
     fail.
 

@@ -32,7 +32,7 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agente_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casas_suspeitas/1, ouro_avista/1, ponto_de_decisao/1, alvo/1]). %fatos dinamicos
+:- dynamic ([agente_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casas_suspeitas/1, ouro_avista/1, ponto_de_decisao/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -59,9 +59,7 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(ouro_avista(_)),
     assert(ouro_avista([goforward, grab])), %lista a ser executada quando agente vir brilho
     retractall(ponto_de_decisao(_)),
-    assert(ponto_de_decisao([])),
-    retractall(alvo(_)),
-    assert(alvo([])).
+    assert(ponto_de_decisao([])).
 
 restart_agent :- 
     init_agent.
@@ -260,9 +258,16 @@ estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar par
 %   assert(ouro_avista(S)).
 
 
-
 % Funcoes
-faz_alvo(AlvoP):-
+faz_alvo(Alvo):-
+    minhacasa(Posicao),
+    adjacentes(Posicao, L),
+    casas_seguras(Cs),
+    intersection(L, Cs, Alvo),
+    write('Alvo: '),
+    writeln(Alvo).
+
+/*faz_alvo(AlvoP):-
     casas_seguras(Cs),
     casas_visitadas(Cv),
     subtract(Cs, Cv, [H|T]),
@@ -270,7 +275,7 @@ faz_alvo(AlvoP):-
     retractall(alvo(_)),
     assert(alvo(T)),
     write('Alvo: '),
-    writeln(AlvoP).
+    writeln(AlvoP).*/
 
 % Calculacao sentido 0
 calculacao([X1, Y], 0, [X2, Y], goforward):-

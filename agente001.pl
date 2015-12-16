@@ -126,8 +126,14 @@ estou_sentindo_uma_treta([_,no,_,_,yes], _):- %Wumpus morto apos agente ouvir o 
     assert(casas_seguras(Casasseguras1)),
     subtract(Casassuspeitas, Casasseguras1, Novassuspeitas),
     retractall(casas_suspeitas(_)),
-    assert(casas_suspeitas(Novassuspeitas)),
-    write('Wumpus morto !!!'), nl,
+    assert(casas_suspeitas(Novassuspeitas)), nl,
+    write('Ja acabou, Wumpus?'), nl,
+    fail.
+
+estou_sentindo_uma_treta([_,yes,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
+    retractall(wumpus(_)), 
+    assert(wumpus(morto)), nl,
+    write('Ja acabou, Wumpus?'), nl,
     fail.
 
 estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
@@ -180,21 +186,21 @@ estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
     member(Frente, Casassuspeitas),
     novosentidoleft.
 
-estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho
-    minhacasa(Posicao),
-    orientacao(Sentido),
-    casas_seguras(Casasseguras),
-    faz_frente(Posicao, Sentido, Frente),
-    member(Frente, Casasseguras), %vai fazer caso casa da frente seja membro de casas seguras
-    ouro_avista([A|S]),
-    Acao = A,
-    retractall(ouro_avista(_)),
-    assert(ouro_avista(S)).
+%estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho
+%   minhacasa(Posicao),
+%   orientacao(Sentido),
+%   casas_seguras(Casasseguras),
+%   faz_frente(Posicao, Sentido, Frente),
+%   member(Frente, Casasseguras), %vai fazer caso casa da frente seja membro de casas seguras
+%   ouro_avista([A|S]),
+%   Acao = A,
+%   retractall(ouro_avista(_)),
+%   assert(ouro_avista(S)).
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
     novosentidoleft.
 
-estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
+estou_sentindo_uma_treta([_,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
      orientacao(Ori),
      minhacasa(MinhaCasa),
      retractall(casa_anterior(_)),

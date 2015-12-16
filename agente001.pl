@@ -110,6 +110,11 @@ run_agent(Percepcao, Acao) :-
 % Acoes: goforward, turnright, turnleft, grab, climb, shoot
 % Listas: casas_visitadas(Cv), casas_seguras(Cs), casas_suspeitas(Casassuspeitas)
 
+estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
+    agent_flecha(X), 
+    X==1, 
+    wumpus(alive), 
+    tiro.
 estou_sentindo_uma_treta([_,yes,_,no,_], goforward):-
     minhacasa(Posicao),
     orientacao(Sentido),
@@ -128,14 +133,16 @@ estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):-
     member(Frente, Casassuspeitas),
     novosentidoleft.
 
-estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho 
+estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho
+    minhacasa(Posicao),
+    orientacao(Sentido),
     casas_seguras(Cs),
-    faz_frente(rente),
+    faz_frente(Posicao, Sentido, Frente),
     member(Frente, Cs), %vai fazer caso casa da frente seja membro de casas seguras
     ouro_avista([A|S]),
+    Acao = A,
     retractall(ouro_avista(_)),
     assert(ouro_avista(S)).
-
 
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
@@ -153,13 +160,6 @@ estou_sentindo_uma_treta([_,_,_,_,yes], _):- %Wumpus morto apos agente ouvir o g
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
     novosentidoleft.
-
-estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
-    agent_flecha(X), 
-    X==1, 
-    wumpus(alive), 
-    tiro.
-
 /*estou_sentindo_uma_treta([no,no,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
     orientacao(Ori),
     minhacasa(MinhaCasa),

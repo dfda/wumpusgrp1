@@ -45,7 +45,7 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(agent_flecha(_)),
     assert(agent_flecha(1)),        % numero inicial de flechas 
     retractall(wumpus(_)),
-    assert(wumpus(alive)),          % estado inicial do wumpus
+    assert(wumpus(vivo)),          % estado inicial do wumpus
     retractall(ouro(_)), 
     assert(ouro(0)),                % quantodade inicial de ouro
     retractall(casas_seguras(_)),
@@ -101,6 +101,9 @@ run_agent(Percepcao, Acao) :-
     ouro(Q),                        % Chamada para recolher quantidade do ouro 
     write('Quantidade de ouro: '),
     writeln(Q),
+    wumpus(X),
+    write('Estado do Wumpus: '),
+    writeln(X),
     estou_sentindo_uma_treta(Percepcao, Acao),
     faz_casa_anterior(Ca).           % Chamada para avaliar se casa anterior esta correta%
     
@@ -113,14 +116,25 @@ run_agent(Percepcao, Acao) :-
 estou_sentindo_uma_treta([yes,_,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
     agent_flecha(X), 
     X==1, 
-    wumpus(alive), 
+    wumpus(vivo), 
     tiro.
+
 estou_sentindo_uma_treta([_,yes,_,no,_], goforward):-
     minhacasa(Posicao),
     orientacao(Sentido),
     casas_seguras(Cs),
     faz_frente(Posicao, Sentido, Frente),
     member(Frente, Cs),
+    retractall(casa_anterior(_)),
+    assert(casa_anterior(Posicao)),
+    novaposicao(Sentido).
+
+estou_sentindo_uma_treta([yes,_,_,no,_], goforward):-
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    casas_seguras(Casasseguras),
+    faz_frente(Posicao, Sentido, Frente),
+    member(Frente, Casasseguras),
     retractall(casa_anterior(_)),
     assert(casa_anterior(Posicao)),
     novaposicao(Sentido).
@@ -154,18 +168,25 @@ estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso estej
 
 estou_sentindo_uma_treta([_,_,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
     retractall(wumpus(_)), 
-    assert(wumpus(dead)),
+    assert(wumpus(morto)),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    casas_seguras(Casasseguras),
+    faz_frente(Posicao, Sentido, Frente),
+    append([Frente], Casasseguras, Casasseguras1),
+    retractall(casas_seguras(_)),
+    assert(casas_seguras(Casasseguras1)),
     write('Wumpus morto !!!'), nl,
     fail.
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
     novosentidoleft.
 /*estou_sentindo_uma_treta([no,no,no,no,_], goforward):- %agente segue em frente caso nao haja ouro e nao sinta trombada%
-    orientacao(Ori),
-    minhacasa(MinhaCasa),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(MinhaCasa)),
-    novaposicao(Ori).*/
+    %    orientacao(Ori),
+    %  minhacasa(MinhaCasa),
+    %retractall(casa_anterior(_)),
+    %assert(casa_anterior(MinhaCasa)),
+    %novaposicao(Ori).*/
 
 estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
      orientacao(Ori),

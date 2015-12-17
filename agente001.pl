@@ -61,7 +61,7 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     assert(agente_flecha(1)),        % numero inicial de flechas 
     assert(wumpus(vivo)),          % estado inicial do wumpus
     assert(ouro(0)),                % quantodade inicial de ouro
-    assert(casas_seguras([[1,1]])), % lista inicial de casas seguras
+    assert(casas_seguras([])), % lista inicial de casas seguras
     assert(casas_visitadas([[1,1]])), % lista inicial de casas visitadas
     assert(casa_anterior([1,1])),    % lista inicial de casa anterior
     assert(casas_suspeitas([])).    % lista inicial de casa suspeita
@@ -97,7 +97,7 @@ run_agent(Percepcao, Acao) :-
     casas_seguras(Casasseguras),   % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Casasseguras),
-    faz_casas_suspeitas(L, Casasseguras, Casasuspeitainicial), % Chamada da funcao para casas suspeitas
+    faz_casas_suspeitas(L, Casasvisitadas, Casasuspeitainicial), % Chamada da funcao para casas suspeitas
     atualiza_casas_suspeitas(Casasuspeitainicial),
     casas_suspeitas(Casassuspeitas),
     write('Casas suspeitas: '),
@@ -171,10 +171,8 @@ estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso estej
 
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas seguras tenham sido visitadas
     minhacasa([1,1]),
-    casas_visitadas(Casasvisitadas),
-    casas_seguras(Casasseguras),
-    subtract(Casasseguras, Casasvisitadas, Resto),
-    Resto == [],  
+    casas_seguras(CasasSeguras),
+    CasasSeguras==[],
     write('Ja visitei todos os lugares seguros, vou nessa! '), nl.
 
 % wumpus dead (procedimentos)
@@ -361,9 +359,11 @@ faz_casas_seguras(Posicao, _, [_,_,_,_,_], Csa):- % Caso o agente sinta algo, a 
     Csa=[Posicao].
 
 atualiza_casas_seguras(Csa):- % Sempre recebe a variavel Csa para adicionar na lista Cs criando uma nova lista, atualizando a lista de casas seguras
-    casas_seguras(Casasseguras),
-    append(Csa, Casasseguras, NovaLista1),
-    list_to_set(NovaLista1, NovaLista), %list_to_set para retirar casas repetidas da lista atualizada
+    casas_seguras(CasasSeguras),
+    casas_visitadas(CasasVisitadas),
+    append(Csa, CasasSeguras, NovaLista1),
+    list_to_set(NovaLista1, NovaLista2), %list_to_set para retirar casas repetidas da lista atualizada
+    subtract(NovaLista2, CasasVisitadas, NovaLista),
     retractall(casas_seguras(_)),
     assert(casas_seguras(NovaLista)).
 
@@ -388,18 +388,18 @@ faz_casa_anterior(_) :-  %regra pra que seja sempre verdade e acao seja retornad
    true.
 
 % Predicados para as casas suspeitas
-faz_casas_suspeitas(L, Casasseguras, Casasuspeitainicial):-
-    intersection(Casasseguras, L, L1),
-    subtract(L, L1, Casasuspeitainicial).
+faz_casas_suspeitas(L, CasasVisitadas, CasaSuspeitaInicial):- 
+    intersection(CasasVisitadas, L, L1), % Intersecao das casas visitadas com as casas adjacentes
+    subtract(L, L1, CasaSuspeitaInicial). % Subtrair a lista com as intersecoes da adjacente
 
 atualiza_casas_suspeitas(Casasuspeitainicial):-
-    casas_seguras(Casasseguras),
-    casas_suspeitas(Casassuspeitas),
-    append(Casasuspeitainicial, Casassuspeitas, NovaLista1),
-    list_to_set(NovaLista1, NovaLista),
-    subtract(NovaLista, Casasseguras, NovaLista2),
+    casas_seguras(Casasseguras), % casas seguras atuais
+    casas_suspeitas(Casassuspeitas), % casas suspeitas atuais
+    append(Casasuspeitainicial, Casassuspeitas, NovaLista1), % adicionar a lista do predicado anterior na lista de casa suspeita atual
+    list_to_set(NovaLista1, NovaLista), % retirar casas iguais
+    subtract(NovaLista, Casasseguras, NovaLista2), % retirar as casas seguras da lista
     retractall(casas_suspeitas(_)),
-    assert(casas_suspeitas(NovaLista2)).
+    assert(casas_suspeitas(NovaLista2)). % atualizar a lista
 
 % Predicados para a casa da frente
 faz_frente([4, Y], 0, [4, Y]).      % casa da extremidade, a casa da frente e' a mesma casa que o agente esta

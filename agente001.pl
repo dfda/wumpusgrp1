@@ -1,35 +1,12 @@
-% Some simple test agents.
-%
-% To define an agent within the navigate.pl scenario, define:
-%   init_agent
-%   restart_agent
-%   run_agent
-%
-% Currently set up to solve the wumpus world in Figure 6.2 of Russell and
-% Norvig.  You can enforce generation of this world by changing the
-% initialize(random,Percept) to initialize(fig62,Percept) in the
-% navigate(Actions,Score,Time) procedure in file navigate.pl and then run
-% navigate(Actions,Score,Time).
-
-% Lista de Percepcao: [Stench,Breeze,Glitter,Bump,Scream]
-% Traducao: [Fedor,Vento,Brilho,Trombada,Grito]
-% Acoes possiveis:
-% goforward - andar
-% turnright - girar sentido horario
-% turnleft - girar sentido anti-horario
-% grab - pegar o ouro
-% climb - sair da caverna
-% shoot - atirar a flecha
-
-% Copie wumpus1.pl e agenteXX.pl onde XX eh o numero do seu agente (do grupo)
-% para a pasta rascunhos e depois de pronto para trabalhos
-% Todos do grupo devem copiar para sua pasta trabalhos, 
-% com o mesmo NUMERO, o arquivo identico.
-
-% Para rodar o exemplo, inicie o prolog com:
-% swipl -s agente007.pl
-% e faca a consulta (query) na forma:
-% ?- start.
+/* Wumpusgrp1
+*  Disciplina: Logica Matematica
+*  Professor: Ruben C. Benante
+*  Autores:
+*  Alesson Renato Lopes Valenca
+*  Cassia Regina Franca Barbosa
+*  Rafael de Souza Pereira
+*  Wagner Lucas Ferreira da Silva
+*/
 
 :- load_files([wumpus3]).
 :- dynamic ([agente_flecha/1, 
@@ -40,12 +17,13 @@
              casas_seguras/1, 
              casas_visitadas/1, 
              casa_anterior/1, 
-             casas_suspeitas/1]). %fatos dinamicos
+             casas_suspeitas/1,
+             qtdacao/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
-init_agent :-                       % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
-    writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente
+init_agent :-                      
+    writeln('Agente iniciando...'),
     retractall(minhacasa(_)),
     retractall(orientacao(_)),
     retractall(agente_flecha(_)),
@@ -55,16 +33,17 @@ init_agent :-                       % se nao tiver nada para fazer aqui, simples
     retractall(casas_visitadas(_)),
     retractall(casa_anterior(_)),
     retractall(casas_suspeitas(_)),
-    retractall(ouro_avista(_)),
-    assert(minhacasa([1,1])),       % casa inicial
-    assert(orientacao(0)),          % orientecao inicial
-    assert(agente_flecha(1)),        % numero inicial de flechas 
-    assert(wumpus(vivo)),          % estado inicial do wumpus
-    assert(ouro(0)),                % quantodade inicial de ouro
-    assert(casas_seguras([])), % lista inicial de casas seguras
-    assert(casas_visitadas([[1,1]])), % lista inicial de casas visitadas
-    assert(casa_anterior([1,1])),    % lista inicial de casa anterior
-    assert(casas_suspeitas([])).    % lista inicial de casa suspeita
+    retractall(qtdacao(_)),
+    assert(minhacasa([1,1])),           % casa inicial
+    assert(orientacao(0)),              % orientecao inicial
+    assert(agente_flecha(1)),           % numero inicial de flechas 
+    assert(wumpus(vivo)),               % estado inicial do wumpus
+    assert(ouro(0)),                    % quantodade inicial de ouro
+    assert(casas_seguras([])),          % lista inicial de casas seguras
+    assert(casas_visitadas([[1,1]])),   % lista inicial de casas visitadas
+    assert(casa_anterior([1,1])),       % lista inicial de casa anterior
+    assert(casas_suspeitas([])),        % lista inicial de casa suspeita
+    assert(qtdacao(0)).                 % quantidade de acoes inicia 0
 
 restart_agent :- 
     init_agent.
@@ -111,6 +90,9 @@ run_agent(Percepcao, Acao) :-
     wumpus(Estado),
     write('Estado do Wumpus: '), % Chamada para recolher estado do wumpus
     writeln(Estado),
+    qtdacao(Qda), % Chamada do fato dinamico quantidade de acoes
+    write('Quantidade de acoes: '),
+    writeln(Qda),
     estou_sentindo_uma_treta(Percepcao, Acao),
     faz_casa_anterior(Casaanterior).           % Chamada para avaliar se casa anterior esta correta%
     
@@ -120,19 +102,13 @@ run_agent(Percepcao, Acao) :-
 % Acoes: goforward, turnright, turnleft, grab, climb, shoot
 % Listas: casas_visitadas(Casasvisitadas), casas_seguras(Casasseguras), casas_suspeitas(Casassuspeitas)
 
-%estou_sentindo_uma_treta([_,_,_,_,_], Acao):-
-%   faz_alvo(Alvo),
-%   minhacasa(Posicao),
-%   orientacao(Sentido),
-%   calculacao(Posicao, Sentido, Alvo, Acao).
-
 % grab (prioridade máxima do agente) [0]
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
     retractall(ouro(_)),
     assert(ouro(1)),
     write('Estou com ouro !!!'),nl.
 
-% shoot (prioridade)
+% shoot (prioridade) [1]
 estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
     agente_flecha(X), 
     X>0, 
@@ -152,7 +128,7 @@ estou_sentindo_uma_treta([yes,yes,_,_,_], shoot) :-  %agente atira caso tenha fl
     wumpus(vivo), 
     tiro.
 
-% climbs (prioridade) [1]
+% climbs (prioridade) [2]
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
     ouro(1).
@@ -197,11 +173,18 @@ estou_sentindo_uma_treta([_,yes,_,_,yes], _):- %Wumpus morto apos agente ouvir o
     write('Ja acabou, Wumpus?'), nl,
     fail.
 
-
 % goforwards (prioridade) [3]
+
+/*estou_sentindo_uma_treta([_,_,_,_,_], Acao):-
+   faz_alvo(Alvo),
+   minhacasa(Posicao),
+   orientacao(Sentido),
+   calculacao(Posicao, Sentido, Alvo, Acao).*/
+
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
     novosentidoleft.
 
+% Acoes para o agente visitar casas seguras
 estou_sentindo_uma_treta(_, Acao):-
     casas_seguras(CasasSeguras),
     minhacasa(Posicao),
@@ -234,6 +217,23 @@ estou_sentindo_uma_treta(_, Acao):-
     member(Frente, CasasSeguras),
     acao(Sentido, 270, Acao).
 
+% Acoes para o agente voltar pelas casas visitadas
+estou_sentindo_uma_treta(_, Acao):-
+    casas_visitadas(CasasVisitadas),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 0, Frente),
+    member(Frente, CasasVisitadas),
+    acao(Sentido, 0, Acao).
+
+estou_sentindo_uma_treta(_, Acao):-
+    casas_visitadas(CasasVisitadas),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 90, Frente),
+    member(Frente, CasasVisitadas),
+    acao(Sentido, 90, Acao).
+
 estou_sentindo_uma_treta(_, Acao):-
     casas_visitadas(CasasVisitadas),
     minhacasa(Posicao),
@@ -242,27 +242,32 @@ estou_sentindo_uma_treta(_, Acao):-
     member(Frente, CasasVisitadas),
     acao(Sentido, 180, Acao).
 
+estou_sentindo_uma_treta(_, Acao):-
+    casas_visitadas(CasasVisitadas),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 270, Frente),
+    member(Frente, CasasVisitadas),
+    acao(Sentido, 270, Acao).
+
+% Escolha das acoes
 acao(Sentido1, Sentido2, Acao):-
     Sentido1==Sentido2,
     Acao=goforward,
-    novaposicao.
+    novaposicao,
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
 acao(Sentido1, Sentido2, Acao):-
     Sentido1\==Sentido2,
     Acao=turnleft,
-    novosentidoleft.
-
-%estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho
-%   minhacasa(Posicao),
-%   orientacao(Sentido),
-%   casas_seguras(Casasseguras),
-%   faz_frente(Posicao, Sentido, Frente),
-%   member(Frente, Casasseguras), %vai fazer caso casa da frente seja membro de casas seguras
-%   ouro_avista([A|S]),
-%   Acao = A,
-%   retractall(ouro_avista(_)),
-%   assert(ouro_avista(S)).
-
+    novosentidoleft,
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
 % Funcoes
 faz_alvo(Alvo):-

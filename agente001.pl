@@ -32,7 +32,17 @@
 % ?- start.
 
 :- load_files([wumpus3]).
-:- dynamic ([agente_flecha/1, wumpus/1, ouro/1, minhacasa/1, orientacao/1, casas_seguras/1, casas_visitadas/1, casa_anterior/1, casas_suspeitas/1, ouro_avista/1, ponto_de_decisao/1]). %fatos dinamicos
+:- dynamic ([agente_flecha/1, 
+             wumpus/1, 
+             ouro/1, 
+             minhacasa/1, 
+             orientacao/1, 
+             casas_seguras/1, 
+             casas_visitadas/1, 
+             casa_anterior/1, 
+             casas_suspeitas/1, 
+             ouro_avista/1, 
+             ponto_de_decisao/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
@@ -220,7 +230,7 @@ estou_sentindo_uma_treta([yes,_,_,no,_], goforward):-
     assert(casa_anterior(Posicao)),
     novaposicao(Sentido).
 
-estou_sentindo_uma_treta([_,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
+estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
      orientacao(Ori),
      minhacasa(MinhaCasa),
      retractall(casa_anterior(_)),

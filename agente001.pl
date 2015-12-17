@@ -40,36 +40,31 @@
              casas_seguras/1, 
              casas_visitadas/1, 
              casa_anterior/1, 
-             casas_suspeitas/1, 
-             ouro_avista/1, 
-             ponto_de_decisao/1]). %fatos dinamicos
+             casas_suspeitas/1]). %fatos dinamicos
 
 wumpusworld(pit3, 4).
 
 init_agent :-                       % se nao tiver nada para fazer aqui, simplesmente termine com um ponto (.)
     writeln('Agente iniciando...'), % apague esse writeln e coloque aqui as acoes para iniciar o agente
     retractall(minhacasa(_)),
-    assert(minhacasa([1,1])),       % casa inicial
     retractall(orientacao(_)),
-    assert(orientacao(0)),          % orientecao inicial
     retractall(agente_flecha(_)),
-    assert(agente_flecha(1)),        % numero inicial de flechas 
     retractall(wumpus(_)),
-    assert(wumpus(vivo)),          % estado inicial do wumpus
     retractall(ouro(_)), 
-    assert(ouro(0)),                % quantodade inicial de ouro
     retractall(casas_seguras(_)),
-    assert(casas_seguras([[1,1]])), % lista inicial de casas seguras
     retractall(casas_visitadas(_)),
-    assert(casas_visitadas([[1,1]])), % lista inicial de casas visitadas
     retractall(casa_anterior(_)),
-    assert(casa_anterior([1,1])),    % lista inicial de casa anterior
     retractall(casas_suspeitas(_)),
-    assert(casas_suspeitas([])),    % lista inicial de casa suspeita
     retractall(ouro_avista(_)),
-    assert(ouro_avista([goforward, grab])), %lista a ser executada quando agente vir brilho
-    retractall(ponto_de_decisao(_)),
-    assert(ponto_de_decisao([])).
+    assert(minhacasa([1,1])),       % casa inicial
+    assert(orientacao(0)),          % orientecao inicial
+    assert(agente_flecha(1)),        % numero inicial de flechas 
+    assert(wumpus(vivo)),          % estado inicial do wumpus
+    assert(ouro(0)),                % quantodade inicial de ouro
+    assert(casas_seguras([[1,1]])), % lista inicial de casas seguras
+    assert(casas_visitadas([[1,1]])), % lista inicial de casas visitadas
+    assert(casa_anterior([1,1])),    % lista inicial de casa anterior
+    assert(casas_suspeitas([])).    % lista inicial de casa suspeita
 
 restart_agent :- 
     init_agent.
@@ -117,9 +112,6 @@ run_agent(Percepcao, Acao) :-
     write('Estado do Wumpus: '), % Chamada para recolher estado do wumpus
     writeln(Estado),
     estou_sentindo_uma_treta(Percepcao, Acao),
-    ponto_de_decisao(Decisao),
-    write('Pontos de decisao: '),
-    writeln(Decisao),
     faz_casa_anterior(Casaanterior).           % Chamada para avaliar se casa anterior esta correta%
     
 % Fatos (acoes que vao ser executadas)
@@ -240,10 +232,6 @@ estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente 
 % oritentacoes (prioridade) [4]
 estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):- % Agente vira caso sinta brisa e a casa da frente for suspeita
     minhacasa(Posicao),
-    ponto_de_decisao(Decisao),
-    append([Posicao], Decisao, NovaLista),
-    retractall(ponto_de_decisao(_)),
-    assert(ponto_de_decisao(NovaLista)),
     orientacao(Sentido),
     casas_suspeitas(Casassuspeitas),
     faz_frente(Posicao, Sentido, Frente),
@@ -251,22 +239,10 @@ estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):- % Agente vira caso sinta bri
     novosentidoleft.
 
 estou_sentindo_uma_treta([_,_,_,yes,_], turnright):-
-    minhacasa(Posicao),
     orientacao(180),
-    ponto_de_decisao(Decisao),
-    append([Posicao], Decisao, NovaLista1),
-    list_to_set(NovaLista1, NovaLista),
-    retractall(ponto_de_decisao(_)),
-    assert(ponto_de_decisao(NovaLista)),
     novosentidoright.
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-    minhacasa(Posicao),
-    ponto_de_decisao(Decisao),
-    append([Posicao], Decisao, NovaLista1),
-    list_to_set(NovaLista1, NovaLista),
-    retractall(ponto_de_decisao(_)),
-    assert(ponto_de_decisao(NovaLista)),
     novosentidoleft.
 
 %estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho

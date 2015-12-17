@@ -157,13 +157,12 @@ estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possu
     minhacasa([1,1]),
     ouro(1).
 
-%estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1] 
-%   minhacasa([1,1]), 
-%   adjacentes([1,1], L),
-%   casas_suspeitas(Casassuspeitas), 
-%   subtract(L, Casassuspeitas, Resto),
-%   Resto == [],  
-%    write('Eu nao vou morrer aqui, xau! '), nl.
+estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1] 
+   minhacasa([1,1]), 
+   adjacentes([1,1], L),  
+   casas_suspeitas(CasasSuspeitas),
+   L==CasasSuspeitas,
+   write('Eu nao vou morrer aqui, xau! '), nl.
 
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus
     minhacasa([1,1]),
@@ -200,46 +199,57 @@ estou_sentindo_uma_treta([_,yes,_,_,yes], _):- %Wumpus morto apos agente ouvir o
 
 
 % goforwards (prioridade) [3]
-estou_sentindo_uma_treta([_,yes,_,no,_], goforward):-
-    minhacasa(Posicao),
-    orientacao(Sentido),
-    casas_seguras(Casasseguras),
-    faz_frente(Posicao, Sentido, Frente),
-    member(Frente, Casasseguras),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(Posicao)),
-    novaposicao.
-
-estou_sentindo_uma_treta([yes,_,_,no,_], goforward):-
-    minhacasa(Posicao),
-    orientacao(Sentido),
-    casas_seguras(Casasseguras),
-    faz_frente(Posicao, Sentido, Frente),
-    member(Frente, Casasseguras),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(Posicao)),
-    novaposicao.
-
-estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
-     minhacasa(MinhaCasa),
-     retractall(casa_anterior(_)),
-     assert(casa_anterior(MinhaCasa)),
-     novaposicao.
-
-% oritentacoes (prioridade) [4]
-estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):- % Agente vira caso sinta brisa e a casa da frente for suspeita
-    minhacasa(Posicao),
-    orientacao(Sentido),
-    casas_suspeitas(Casassuspeitas),
-    faz_frente(Posicao, Sentido, Frente),
-    member(Frente, Casassuspeitas),
+estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
     novosentidoleft.
 
-estou_sentindo_uma_treta([_,_,_,yes,_], turnright):-
-    orientacao(180),
-    novosentidoright.
+estou_sentindo_uma_treta(_, Acao):-
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 0, Frente),
+    member(Frente, CasasSeguras),
+    acao(Sentido, 0, Acao).
 
-estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
+estou_sentindo_uma_treta(_, Acao):-
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 90, Frente),
+    member(Frente, CasasSeguras),
+    acao(Sentido, 90, Acao).
+
+estou_sentindo_uma_treta(_, Acao):-
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 180, Frente),
+    member(Frente, CasasSeguras),
+    acao(Sentido, 180, Acao).
+
+estou_sentindo_uma_treta(_, Acao):-
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 270, Frente),
+    member(Frente, CasasSeguras),
+    acao(Sentido, 270, Acao).
+
+estou_sentindo_uma_treta(_, Acao):-
+    casas_visitadas(CasasVisitadas),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 180, Frente),
+    member(Frente, CasasVisitadas),
+    acao(Sentido, 180, Acao).
+
+acao(Sentido1, Sentido2, Acao):-
+    Sentido1==Sentido2,
+    Acao=goforward,
+    novaposicao.
+
+acao(Sentido1, Sentido2, Acao):-
+    Sentido1\==Sentido2,
+    Acao=turnleft,
     novosentidoleft.
 
 %estou_sentindo_uma_treta([_,yes,yes,_,_], Acao):- %Acao caso o agente sinta brisa e brilho

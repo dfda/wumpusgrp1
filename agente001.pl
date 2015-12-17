@@ -106,7 +106,11 @@ run_agent(Percepcao, Acao) :-
 estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
     retractall(ouro(_)),
     assert(ouro(1)),
-    write('Estou com ouro !!!'),nl.
+    write('Estou com ouro !!!'),nl,
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
 % shoot (prioridade) [1]
 estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
@@ -120,35 +124,59 @@ estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha fle
     casas_seguras(Casasseguras),
     append([Frente], Casasseguras, CasasSeg1),
     retractall(casas_seguras(_)),
-    assert(casas_seguras(CasasSeg1)).
+    assert(casas_seguras(CasasSeg1)),
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
     
 estou_sentindo_uma_treta([yes,yes,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
     agente_flecha(X), 
     X>0, 
     wumpus(vivo), 
-    tiro.
+    tiro,
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
 % climbs (prioridade) [2]
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
-    ouro(1).
+    ouro(1),
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1] 
-   minhacasa([1,1]), 
-   adjacentes([1,1], L),  
-   casas_suspeitas(CasasSuspeitas),
-   L==CasasSuspeitas,
-   write('Eu nao vou morrer aqui, xau! '), nl.
+estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1]
+    minhacasa([1,1]), 
+    adjacentes([1,1], L),  
+    casas_suspeitas(CasasSuspeitas),
+    L==CasasSuspeitas,
+    write('Eu nao vou morrer aqui, xau! '), nl,
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus
+estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus    
     minhacasa([1,1]),
-    wumpus(morto).
+    wumpus(morto),
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas seguras tenham sido visitadas
     minhacasa([1,1]),
     casas_seguras(CasasSeguras),
     CasasSeguras==[],
-    write('Ja visitei todos os lugares seguros, vou nessa! '), nl.
+    write('Ja visitei todos os lugares seguros, vou nessa! '), nl,
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
 % wumpus dead (procedimentos)
 estou_sentindo_uma_treta([_,no,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
@@ -174,15 +202,33 @@ estou_sentindo_uma_treta([_,yes,_,_,yes], _):- %Wumpus morto apos agente ouvir o
     fail.
 
 % goforwards (prioridade) [3]
+estou_sentindo_uma_treta(_, Acao):- % Quando quantidade maxima de acoe e' maior que 49, o agente prioriza o retorno a casa [1,1] 
+    qtdacao(Qda),
+    Qda>49,
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    calculacao(Posicao, Sentido, [1,1], Acao),
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
-/*estou_sentindo_uma_treta([_,_,_,_,_], Acao):-
-   faz_alvo(Alvo),
-   minhacasa(Posicao),
-   orientacao(Sentido),
-   calculacao(Posicao, Sentido, Alvo, Acao).*/
+estou_sentindo_uma_treta(_, Acao):- % Quando a lista de casas seguras e' vazia, o agente prioriza o retorno a casa [1,1]
+    casas_seguras([]),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    calculacao(Posicao, Sentido, [1,1], Acao),
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-    novosentidoleft.
+    novosentidoleft,
+    qtdacao(Qda),
+    Qda1 is Qda+1,
+    retractall(qtdacao(_)),
+    assert(qtdacao(Qda1)).
 
 % Acoes para o agente visitar casas seguras
 estou_sentindo_uma_treta(_, Acao):-
@@ -270,14 +316,6 @@ acao(Sentido1, Sentido2, Acao):-
     assert(qtdacao(Qda1)).
 
 % Funcoes
-faz_alvo(Alvo):-
-    minhacasa(Posicao),
-    adjacentes(Posicao, L),
-    casas_seguras(Cs),
-    intersection(L, Cs, Alvo),
-    write('Alvo: '),
-    writeln(Alvo).
-
 % Calculacao sentido 0
 calculacao([X1, Y], 0, [X2, Y], goforward):-
     X1<X2,
@@ -338,7 +376,7 @@ calculacao([X, Y1], 180, [X, Y2], turnleft):-
     Y1>Y2,
     novosentidoleft.
 
-% calculacao 270
+% calculacao sentido 270
 calculacao([X1, Y], 270, [X2, Y], turnleft):-
     X1<X2,
     novosentidoleft.
@@ -370,7 +408,7 @@ faz_casas_seguras(Posicao, L, [no,no,_,_,_], Csa):- %casas que sao seguras, com 
     append([Posicao], L, Csb),
     list_to_set(Csb, Csa).
 
-faz_casas_seguras(Posicao, _, [_,_,_,_,_], Csa):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
+faz_casas_seguras(Posicao, _, _, Csa):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
     Csa=[Posicao].
 
 atualiza_casas_seguras(Csa):- % Sempre recebe a variavel Csa para adicionar na lista Cs criando uma nova lista, atualizando a lista de casas seguras
@@ -443,6 +481,7 @@ novosentidoleft:- % muda a memoria do sentido atual caso aconteca um turnleft
     Novosentido is (Sentido+90) mod 360,
     retractall(orientacao(_)),
     assert(orientacao(Novosentido)).
+
 novosentidoright:- % muda a memoria do sentido atual caso aconteca um turnright
     orientacao(Sentido),
     Novosentido is (Sentido-90) mod 360,
@@ -591,7 +630,7 @@ adjacentes([X, Y], L):-
     baixo([X, Y], L2),
     L=[L1, L2, L3].
 
-% Funcoes para calcular as coordenas das casas adjacentes
+% Funcoes para calcular as coordenadas das casas adjacentes
 cima([X, Y], L1):-
     Y1 is Y + 1,
     L1=[X, Y1].

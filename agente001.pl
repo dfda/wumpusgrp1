@@ -52,28 +52,28 @@ run_agent(Percepcao, Acao) :-
     nl,
     write('Percebi: '), 
     writeln(Percepcao),
-    minhacasa(Posicao),             % Chamada da funcao minhacasa para saber a posicao atual
+    minhacasa(Posicao), % Chamada da funcao minhacasa para saber a posicao atual
     write('Minha posicao: '),
     writeln(Posicao),
-    adjacentes(Posicao, L),         % Chamada da funcao adjacente para obter uma lista de casas adjacentes
+    adjacentes(Posicao, L), % Chamada da funcao adjacente para obter uma lista de casas adjacentes
     write('Casas adjacentes: '),
     writeln(L),
-    orientacao(Sentido),            % Chamada da funcao orientacao para saber a orientacao atual do agente
+    orientacao(Sentido), % Chamada da funcao orientacao para saber a orientacao atual do agente
     write('Sentido do agente: '),
     writeln(Sentido),
     faz_frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
     write('Casa da frente: '),
     writeln(Frente),
-    casa_anterior(Casaanterior),                 % Chamada para saber casa anterior 
+    casa_anterior(Casaanterior), % Chamada para saber casa anterior 
     write('Casa anterior: '),
     writeln(Casaanterior),
-    faz_casas_visitadas(Posicao),       % Chamada para criar casas visitadas
+    faz_casas_visitadas(Posicao), % Chamada para criar casas visitadas
     casas_visitadas(Casasvisitadas),
     write('Casas visitadas: '),
     writeln(Casasvisitadas),
     faz_casas_seguras(Posicao, L, Percepcao, Csa),  % Chamada para criar casas seguras
     atualiza_casas_seguras(Csa),
-    casas_seguras(Casasseguras),   % Chamada da funcao casa segura, dependendo da percepcao do agente
+    casas_seguras(Casasseguras), % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Casasseguras),
     faz_casas_suspeitas(L, Casasvisitadas, Casasuspeitainicial), % Chamada da funcao para casas suspeitas
@@ -81,10 +81,10 @@ run_agent(Percepcao, Acao) :-
     casas_suspeitas(Casassuspeitas),
     write('Casas suspeitas: '),
     writeln(Casassuspeitas),
-    agente_flecha(Flecha),           % Chamada para recolher o valor da variavel Flecha
+    agente_flecha(Flecha), % Chamada para recolher o valor da variavel Flecha
     write('Numero de flechas: '), 
     writeln(Flecha),
-    ouro(Quantidade),                 % Chamada para recolher quantidade do ouro 
+    ouro(Quantidade), % Chamada para recolher quantidade do ouro 
     write('Quantidade de ouro: '),
     writeln(Quantidade),
     wumpus(Estado),
@@ -97,7 +97,6 @@ run_agent(Percepcao, Acao) :-
     faz_casa_anterior(Casaanterior).           % Chamada para avaliar se casa anterior esta correta%
     
 % Fatos (acoes que vao ser executadas)
-
 % Percepcoes: [Fedor,Vento,Brilho,Trombada,Grito]
 % Acoes: goforward, turnright, turnleft, grab, climb, shoot
 % Listas: casas_visitadas(Casasvisitadas), casas_seguras(Casasseguras), casas_suspeitas(Casassuspeitas)
@@ -201,7 +200,7 @@ estou_sentindo_uma_treta([_,yes,_,_,yes], _):- %Wumpus morto apos agente ouvir o
     write('Ja acabou, Wumpus?'), nl,
     fail.
 
-% goforwards (prioridade) [3]
+% goforwards e turnleft (prioridade) [3]
 estou_sentindo_uma_treta(_, Acao):- % Quando quantidade maxima de acoe e' maior que 49, o agente prioriza o retorno a casa [1,1] 
     qtdacao(Qda),
     Qda>49,
@@ -455,22 +454,22 @@ atualiza_casas_suspeitas(Casasuspeitainicial):-
     assert(casas_suspeitas(NovaLista2)). % atualizar a lista
 
 % Predicados para a casa da frente
-faz_frente([4, Y], 0, [4, Y]).      % casa da extremidade, a casa da frente e' a mesma casa que o agente esta
+%faz_frente([4, Y], 0, [4, Y]).      % casa da extremidade, a casa da frente e' a mesma casa que o agente esta
     
 faz_frente([X, Y], 0, [X1, Y]):-   % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
     X1 is X + 1.
 
-faz_frente([X, 4], 90, [X, 4]).     % caso da extremidade, a casa da frente e' a mesma casa que o agente esta
+%faz_frente([X, 4], 90, [X, 4]).     % caso da extremidade, a casa da frente e' a mesma casa que o agente esta
     
 faz_frente([X, Y], 90, [X, Y1]):-   % caso a orientacao do agente seja 90, a casa da frente sera com o 2o elemento da lista mais 1
     Y1 is Y + 1.
 
-faz_frente([1, Y], 180, [1, Y]).    % casa invalida, permanece a casa atual como casa da frente
+%faz_frente([1, Y], 180, [1, Y]).    % casa invalida, permanece a casa atual como casa da frente
     
 faz_frente([X, Y], 180, [X1, Y]):-   % caso a orientacao do agente seja 180, a casa da frente sera com o 1o elemento da lista menos 1
     X1 is X - 1.
 
-faz_frente([X, 1], 270, [X, 1]).    % casa invalida, permanece a casa atual como casa da frente
+%faz_frente([X, 1], 270, [X, 1]).    % casa invalida, permanece a casa atual como casa da frente
     
 faz_frente([X, Y], 270, [X, Y1]):-   % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
     Y1 is Y - 1.

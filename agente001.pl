@@ -210,7 +210,7 @@ estou_sentindo_uma_treta([_,yes,_,no,_], goforward):-
     member(Frente, Casasseguras),
     retractall(casa_anterior(_)),
     assert(casa_anterior(Posicao)),
-    novaposicao(Sentido).
+    novaposicao.
 
 estou_sentindo_uma_treta([yes,_,_,no,_], goforward):-
     minhacasa(Posicao),
@@ -220,14 +220,13 @@ estou_sentindo_uma_treta([yes,_,_,no,_], goforward):-
     member(Frente, Casasseguras),
     retractall(casa_anterior(_)),
     assert(casa_anterior(Posicao)),
-    novaposicao(Sentido).
+    novaposicao.
 
 estou_sentindo_uma_treta([no,no,no,no,no], goforward):- %agente segue em frente caso todas as percepcoes seja no.
-     orientacao(Ori),
      minhacasa(MinhaCasa),
      retractall(casa_anterior(_)),
      assert(casa_anterior(MinhaCasa)),
-     novaposicao(Ori).
+     novaposicao.
 
 % oritentacoes (prioridade) [4]
 estou_sentindo_uma_treta([_,yes,_,_,_], turnleft):- % Agente vira caso sinta brisa e a casa da frente for suspeita
@@ -269,11 +268,10 @@ faz_alvo(Alvo):-
 % Calculacao sentido 0
 calculacao([X1, Y], 0, [X2, Y], goforward):-
     X1<X2,
-    orientacao(Ori),
     minhacasa(MinhaCasa),
     retractall(casa_anterior(_)),
     assert(casa_anterior(MinhaCasa)),
-    novaposicao(Ori).
+    novaposicao.
 
 calculacao([X1, Y], 0, [X2, Y], turnleft):-
     X1>X2,
@@ -290,11 +288,10 @@ calculacao([X, Y1], 0, [X, Y2], turnright):-
 % Calculacao sentido 90
 calculacao([X, Y1], 90, [X, Y2], goforward):-
     Y1<Y2,
-    orientacao(Ori),
     minhacasa(MinhaCasa),
     retractall(casa_anterior(_)),
     assert(casa_anterior(MinhaCasa)),
-    novaposicao(Ori).
+    novaposicao.
 
 calculacao([X, Y1], 90, [X, Y2], turnleft):-
     Y1>Y2,
@@ -315,11 +312,10 @@ calculacao([X1, Y], 180, [X2, Y], turnleft):-
 
 calculacao([X1, Y], 180, [X2, Y], goforward):-
     X1>X2,
-    orientacao(Ori),
     minhacasa(MinhaCasa),
     retractall(casa_anterior(_)),
     assert(casa_anterior(MinhaCasa)),
-    novaposicao(Ori).
+    novaposicao.
 
 calculacao([X, Y1], 180, [X, Y2], turnright):-
     Y1<Y2,
@@ -340,11 +336,10 @@ calculacao([X1, Y], 270, [X2, Y], turnright):-
 
 calculacao([X, Y1], 270, [X, Y2], goforward):-
     Y2<Y1,
-    orientacao(Ori),
     minhacasa(MinhaCasa),
     retractall(casa_anterior(_)),
     assert(casa_anterior(MinhaCasa)),
-    novaposicao(Ori).
+    novaposicao.
 
 calculacao([X, Y1], 270, [X, Y2], turnleft):-
     Y2>Y1,
@@ -440,56 +435,64 @@ novosentidoright:- % muda a memoria do sentido atual caso aconteca um turnright
     assert(orientacao(Novosentido)).
 
 % Predicados para atualizar a posicao atual do agente
-novaposicao(0):- 
+novaposicao:- 
+    orientacao(0),
     minhacasa([X,Y]),
     X<4,
     X1 is X+1,   
     retractall(minhacasa([_|_])),
     assert(minhacasa([X1,Y])).
 
-novaposicao(0):- 
+novaposicao:- 
+    orientacao(0),
     minhacasa([X,Y]),
     X==4,
     X1 is X,  
     retractall(minhacasa([_,_])),
     assert(minhacasa([X1,Y])).
 
-novaposicao(90):-
+novaposicao:-
+    orientacao(90),
     minhacasa([X,Y]),
     Y<4,
     Y1 is Y+1, 
     retractall(minhacasa([_,_])),
     assert(minhacasa([X,Y1])).
 
-novaposicao(90):-
+novaposicao:-
+    orientacao(90),
     minhacasa([X,Y]),
     Y==4,
     Y1 is Y, 
     retractall(minhacasa([_,_])),
     assert(minhacasa([X,Y1])).
 
-novaposicao(180):-
+novaposicao:-
+    orientacao(180),
     minhacasa([X,Y]),
     X>1,
     X1 is X-1,
     retractall(minhacasa([_,_])),
     assert(minhacasa([X1,Y])).
 
-novaposicao(180):-
+novaposicao:-
+    orientacao(180),
     minhacasa([X,Y]),
     X==1,
     X1 is X,
     retractall(minhacasa([_,_])),
     assert(minhacasa([X1,Y])).
 
-novaposicao(270):-
+novaposicao:-
+    orientacao(270),
     minhacasa([X,Y]),
     Y>1,
     Y1 is Y-1,
     retractall(minhacasa([_,_])),
     assert(minhacasa([X,Y1])).
 
-novaposicao(270):-
+novaposicao:-
+    orientacao(270),
     minhacasa([X,Y]), 
     Y==1,
     Y1 is Y,

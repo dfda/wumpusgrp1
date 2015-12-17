@@ -266,16 +266,6 @@ faz_alvo(Alvo):-
     write('Alvo: '),
     writeln(Alvo).
 
-/*faz_alvo(AlvoP):-
-    casas_seguras(Cs),
-    casas_visitadas(Cv),
-    subtract(Cs, Cv, [H|T]),
-    AlvoP=H,
-    retractall(alvo(_)),
-    assert(alvo(T)),
-    write('Alvo: '),
-    writeln(AlvoP).*/
-
 % Calculacao sentido 0
 calculacao([X1, Y], 0, [X2, Y], goforward):-
     X1<X2,

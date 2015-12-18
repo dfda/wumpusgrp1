@@ -264,14 +264,13 @@ estou_sentindo_uma_treta(_, Acao):-
     acao(Sentido, 270, Acao).
 
 % Escolha das acoes
-acao(Sentido1, Sentido2, Acao):-
+acao(Sentido1, Sentido2, goforward):-
     Sentido1==Sentido2,
-    Acao=goforward,
+    faz_casa_anterior,
     novaposicao.
 
-acao(Sentido1, Sentido2, Acao):-
+acao(Sentido1, Sentido2, turnleft):-
     Sentido1\==Sentido2,
-    Acao=turnleft,
     novosentidoleft.
 
 % Funcoes

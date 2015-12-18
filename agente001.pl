@@ -132,25 +132,25 @@ estou_sentindo_uma_treta([yes,yes,_,_,_], shoot) :-  %agente atira caso tenha fl
     tiro.
     
 % climbs (prioridade) [2]
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
+estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
     ouro(1).
     
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1]
+estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1]
     minhacasa([1,1]), 
     adjacentes([1,1], L),  
     casas_suspeitas(CasasSuspeitas),
     L==CasasSuspeitas,
     write('Eu nao vou morrer aqui, xau! '), nl.
     
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus    
+estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus    
     minhacasa([1,1]),
+    casas_seguras([]),
     wumpus(morto).
     
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas seguras tenham sido visitadas
+estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso todas as casas seguras tenham sido visitadas
     minhacasa([1,1]),
-    casas_seguras(CasasSeguras),
-    CasasSeguras==[],
+    casas_seguras([]),
     write('Ja visitei todos os lugares seguros, vou nessa! '), nl.
    
 % wumpus dead (procedimentos)

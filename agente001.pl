@@ -71,8 +71,7 @@ run_agent(Percepcao, Acao) :-
     casas_visitadas(Casasvisitadas),
     write('Casas visitadas: '),
     writeln(Casasvisitadas),
-    faz_casas_seguras(Posicao, L, Percepcao, Csa),  % Chamada para criar casas seguras
-    atualiza_casas_seguras(Csa),
+    faz_casas_seguras(Posicao, L, Percepcao),  % Chamada para criar casas seguras
     casas_seguras(Casasseguras), % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Casasseguras),
@@ -353,12 +352,14 @@ tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     assert(agente_flecha(X1)).
 %-----------------------------------------------------%
 % Predicados para as casas seguras
-faz_casas_seguras(Posicao, L, [no,no,_,_,_], Csa):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
+faz_casas_seguras(Posicao, L, [no,no,_,_,_]):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
     append([Posicao], L, Csb),
-    list_to_set(Csb, Csa).
+    list_to_set(Csb, Csa),
+    atualiza_casas_seguras(Csa).
 
-faz_casas_seguras(Posicao, _, _, Csa):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
-    Csa=[Posicao].
+faz_casas_seguras(Posicao, _, _):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
+    Csa=[Posicao],
+    atualiza_casas_seguras(Csa).
 
 atualiza_casas_seguras(Csa):- % Sempre recebe a variavel Csa para adicionar na lista Cs criando uma nova lista, atualizando a lista de casas seguras
     casas_seguras(CasasSeguras),

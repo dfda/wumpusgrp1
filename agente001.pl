@@ -14,7 +14,8 @@
              ouro/1, 
              minhacasa/1, 
              orientacao/1, 
-             casas_seguras/1, 
+             casas_seguras_nao_visitadas/1, 
+             casas_seguras/1,
              casas_visitadas/1, 
              casa_anterior/1, 
              casas_suspeitas/1,
@@ -29,21 +30,23 @@ init_agent :-
     retractall(agente_flecha(_)),
     retractall(wumpus(_)),
     retractall(ouro(_)), 
+    retractall(casas_seguras_nao_visitadas(_)),
     retractall(casas_seguras(_)),
     retractall(casas_visitadas(_)),
     retractall(casa_anterior(_)),
     retractall(casas_suspeitas(_)),
     retractall(qtdacao(_)),
-    assert(minhacasa([1,1])),           % casa inicial
-    assert(orientacao(0)),              % orientecao inicial
-    assert(agente_flecha(1)),           % numero inicial de flechas 
-    assert(wumpus(vivo)),               % estado inicial do wumpus
-    assert(ouro(0)),                    % quantodade inicial de ouro
-    assert(casas_seguras([])),          % lista inicial de casas seguras
-    assert(casas_visitadas([[1,1]])),   % lista inicial de casas visitadas
-    assert(casa_anterior([1,1])),       % lista inicial de casa anterior
-    assert(casas_suspeitas([])),        % lista inicial de casa suspeita
-    assert(qtdacao(0)).                 % quantidade de acoes inicia 0
+    assert(minhacasa([1,1])),               % casa inicial
+    assert(orientacao(0)),                  % orientecao inicial
+    assert(agente_flecha(1)),               % numero inicial de flechas 
+    assert(wumpus(vivo)),                   % estado inicial do wumpus
+    assert(ouro(0)),                        % quantodade inicial de ouro
+    assert(casas_seguras_nao_visitadas([])),% lista inicial de casas seguras nao visitadas
+    assert(casas_seguras([])),              % lista inicial de casas seguras
+    assert(casas_visitadas([[1,1]])),       % lista inicial de casas visitadas
+    assert(casa_anterior([])),              % lista inicial de casa anterior
+    assert(casas_suspeitas([])),            % lista inicial de casa suspeita
+    assert(qtdacao(0)).                     % quantidade de acoes inicia 0
 
 restart_agent :- 
     init_agent.
@@ -71,13 +74,11 @@ run_agent(Percepcao, Acao) :-
     casas_visitadas(Casasvisitadas),
     write('Casas visitadas: '),
     writeln(Casasvisitadas),
-    faz_casas_seguras(Posicao, L, Percepcao, Csa),  % Chamada para criar casas seguras
-    atualiza_casas_seguras(Csa),
-    casas_seguras(Casasseguras), % Chamada da funcao casa segura, dependendo da percepcao do agente
-    write('Casas seguras: '),
-    writeln(Casasseguras),
-    faz_casas_suspeitas(L, Casasvisitadas, Casasuspeitainicial), % Chamada da funcao para casas suspeitas
-    atualiza_casas_suspeitas(Casasuspeitainicial),
+    faz_casas_seguras_nao_visitadas(Posicao, L, Percepcao),  % Chamada para criar casas seguras
+    casas_seguras_nao_visitadas(CasasSegurasNV), % Chamada da funcao casa segura, dependendo da percepcao do agente
+    write('Casas seguras nao visitadas: '),
+    writeln(CasasSegurasNV),
+    faz_casas_suspeitas(L, Casasvisitadas), % Chamada da funcao para casas suspeitas
     casas_suspeitas(Casassuspeitas),
     write('Casas suspeitas: '),
     writeln(Casassuspeitas),
@@ -94,23 +95,25 @@ run_agent(Percepcao, Acao) :-
     write('Quantidade de acoes: '),
     writeln(Qda),
     estou_sentindo_uma_treta(Percepcao, Acao),
-    faz_casa_anterior(Casaanterior).           % Chamada para avaliar se casa anterior esta correta%
+    atualiza_quantidade_acao.
     
 % Fatos (acoes que vao ser executadas)
 % Percepcoes: [Fedor,Vento,Brilho,Trombada,Grito]
 % Acoes: goforward, turnright, turnleft, grab, climb, shoot
-% Listas: casas_visitadas(Casasvisitadas), casas_seguras(Casasseguras), casas_suspeitas(Casassuspeitas)
+% Listas: casas_visitadas(Casasvisitadas), casas_seguras_nao_visitadas(CasasSegurasNV), casas_suspeitas(Casassuspeitas)
 
-% grab (prioridade máxima do agente) [0]
-estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
-    retractall(ouro(_)),
-    assert(ouro(1)),
-    write('Estou com ouro !!!'),nl,
+atualiza_quantidade_acao:-
     qtdacao(Qda),
     Qda1 is Qda+1,
     retractall(qtdacao(_)),
     assert(qtdacao(Qda1)).
 
+% grab (prioridade máxima do agente) [0]
+estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
+    retractall(ouro(_)),
+    assert(ouro(1)),
+    write('Estou com ouro !!!'),nl.
+    
 % shoot (prioridade) [1]
 estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
     agente_flecha(X), 
@@ -120,75 +123,51 @@ estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha fle
     minhacasa(Posicao),
     orientacao(Sentido),
     faz_frente(Posicao, Sentido, Frente),
-    casas_seguras(Casasseguras),
-    append([Frente], Casasseguras, CasasSeg1),
-    retractall(casas_seguras(_)),
-    assert(casas_seguras(CasasSeg1)),
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-    
+    casas_seguras_nao_visitadas(CasassegurasNV),
+    append([Frente], CasassegurasNV, CasasSeg1),
+    retractall(casas_seguras_nao_visitadas(_)),
+    assert(casas_seguras_nao_visitadas(CasasSeg1)).
+        
 estou_sentindo_uma_treta([yes,yes,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
     agente_flecha(X), 
     X>0, 
     wumpus(vivo), 
-    tiro,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-
+    tiro.
+    
 % climbs (prioridade) [2]
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
+estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
-    ouro(1),
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1]
+    ouro(1).
+    
+estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1]
     minhacasa([1,1]), 
     adjacentes([1,1], L),  
     casas_suspeitas(CasasSuspeitas),
     L==CasasSuspeitas,
-    write('Eu nao vou morrer aqui, xau! '), nl,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus    
+    write('Eu nao vou morrer aqui, xau! '), nl.
+    
+estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus    
     minhacasa([1,1]),
-    wumpus(morto),
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-
-estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas seguras tenham sido visitadas
+    casas_seguras_nao_visitadas([]),
+    wumpus(morto).
+    
+estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso todas as casas seguras tenham sido visitadas
     minhacasa([1,1]),
-    casas_seguras(CasasSeguras),
-    CasasSeguras==[],
-    write('Ja visitei todos os lugares seguros, vou nessa! '), nl,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-
+    casas_seguras_nao_visitadas([]),
+    write('Ja visitei todos os lugares seguros, vou nessa!'), nl.
+   
 % wumpus dead (procedimentos)
 estou_sentindo_uma_treta([_,no,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
     retractall(wumpus(_)), 
     assert(wumpus(morto)),
     minhacasa(Posicao),
-    casas_seguras(Casasseguras),
+    casas_seguras_nao_visitadas(CasasSegurasNV),
     casas_suspeitas(Casassuspeitas),
     adjacentes(Posicao, L),
-    append(L, Casasseguras, Casasseguras1),
-    retractall(casas_seguras(_)),
-    assert(casas_seguras(Casasseguras1)),
-    subtract(Casassuspeitas, Casasseguras1, Novassuspeitas),
+    append(L, CasasSegurasNV, CasasSegurasNV1),
+    retractall(casas_seguras_nao_visitadas(_)),
+    assert(casas_seguras_nao_visitadas(CasasSegurasNV1)),
+    subtract(Casassuspeitas, CasasSegurasNV1, Novassuspeitas),
     retractall(casas_suspeitas(_)),
     assert(casas_suspeitas(Novassuspeitas)), nl,
     write('Ja acabou, Wumpus?'), nl,
@@ -206,62 +185,51 @@ estou_sentindo_uma_treta(_, Acao):- % Quando quantidade maxima de acoe e' maior 
     Qda>49,
     minhacasa(Posicao),
     orientacao(Sentido),
-    calculacao(Posicao, Sentido, [1,1], Acao),
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
+    calculacao(Posicao, Sentido, [1,1], Acao).
 
 estou_sentindo_uma_treta(_, Acao):- % Quando a lista de casas seguras e' vazia, o agente prioriza o retorno a casa [1,1]
-    casas_seguras([]),
+    casas_seguras_nao_visitadas([]),
     minhacasa(Posicao),
     orientacao(Sentido),
-    calculacao(Posicao, Sentido, [1,1], Acao),
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
+    calculacao(Posicao, Sentido, [1,1], Acao).
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-    novosentidoleft,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
+    novosentidoleft.
 
 % Acoes para o agente visitar casas seguras
 estou_sentindo_uma_treta(_, Acao):-
-    casas_seguras(CasasSeguras),
+    casas_seguras_nao_visitadas(CasasSegurasNV),
     minhacasa(Posicao),
     orientacao(Sentido),
     faz_frente(Posicao, 0, Frente),
-    member(Frente, CasasSeguras),
+    member(Frente, CasasSegurasNV),
     acao(Sentido, 0, Acao).
 
 estou_sentindo_uma_treta(_, Acao):-
-    casas_seguras(CasasSeguras),
+    casas_seguras_nao_visitadas(CasasSegurasNV),
     minhacasa(Posicao),
     orientacao(Sentido),
     faz_frente(Posicao, 90, Frente),
-    member(Frente, CasasSeguras),
+    member(Frente, CasasSegurasNV),
     acao(Sentido, 90, Acao).
 
 estou_sentindo_uma_treta(_, Acao):-
-    casas_seguras(CasasSeguras),
+    casas_seguras_nao_visitadas(CasasSegurasNV),
     minhacasa(Posicao),
     orientacao(Sentido),
     faz_frente(Posicao, 180, Frente),
-    member(Frente, CasasSeguras),
+    member(Frente, CasasSegurasNV),
     acao(Sentido, 180, Acao).
 
 estou_sentindo_uma_treta(_, Acao):-
-    casas_seguras(CasasSeguras),
+    casas_seguras_nao_visitadas(CasasSegurasNV),
     minhacasa(Posicao),
     orientacao(Sentido),
     faz_frente(Posicao, 270, Frente),
-    member(Frente, CasasSeguras),
+    member(Frente, CasasSegurasNV),
     acao(Sentido, 270, Acao).
 
+%-----------------------------------------------------------------------------------------------%
 % Acoes para o agente voltar pelas casas visitadas
 estou_sentindo_uma_treta(_, Acao):-
     casas_visitadas(CasasVisitadas),
@@ -296,31 +264,20 @@ estou_sentindo_uma_treta(_, Acao):-
     acao(Sentido, 270, Acao).
 
 % Escolha das acoes
-acao(Sentido1, Sentido2, Acao):-
+acao(Sentido1, Sentido2, goforward):-
     Sentido1==Sentido2,
-    Acao=goforward,
-    novaposicao,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
+    faz_casa_anterior,
+    novaposicao.
 
-acao(Sentido1, Sentido2, Acao):-
+acao(Sentido1, Sentido2, turnleft):-
     Sentido1\==Sentido2,
-    Acao=turnleft,
-    novosentidoleft,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
+    novosentidoleft.
 
 % Funcoes
 % Calculacao sentido 0
 calculacao([X1, Y], 0, [X2, Y], goforward):-
     X1<X2,
-    minhacasa(MinhaCasa),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(MinhaCasa)),
+    faz_casa_anterior,
     novaposicao.
 
 calculacao([X1, Y], 0, [X2, Y], turnleft):-
@@ -338,9 +295,7 @@ calculacao([X, Y1], 0, [X, Y2], turnright):-
 % Calculacao sentido 90
 calculacao([X, Y1], 90, [X, Y2], goforward):-
     Y1<Y2,
-    minhacasa(MinhaCasa),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(MinhaCasa)),
+    faz_casa_anterior,
     novaposicao.
 
 calculacao([X, Y1], 90, [X, Y2], turnleft):-
@@ -362,9 +317,7 @@ calculacao([X1, Y], 180, [X2, Y], turnleft):-
 
 calculacao([X1, Y], 180, [X2, Y], goforward):-
     X1>X2,
-    minhacasa(MinhaCasa),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(MinhaCasa)),
+    faz_casa_anterior,
     novaposicao.
 
 calculacao([X, Y1], 180, [X, Y2], turnright):-
@@ -386,9 +339,7 @@ calculacao([X1, Y], 270, [X2, Y], turnright):-
 
 calculacao([X, Y1], 270, [X, Y2], goforward):-
     Y2<Y1,
-    minhacasa(MinhaCasa),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(MinhaCasa)),
+    faz_casa_anterior,
     novaposicao.
 
 calculacao([X, Y1], 270, [X, Y2], turnleft):-
@@ -401,14 +352,36 @@ tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     X1 is X-1,
     retractall(agente_flecha(_)),
     assert(agente_flecha(X1)).
-
+%-----------------------------------------------------%
 % Predicados para as casas seguras
-faz_casas_seguras(Posicao, L, [no,no,_,_,_], Csa):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
+faz_casas_seguras_nao_visitadas(Posicao, L, [no,no,_,_,_]):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
     append([Posicao], L, Csb),
-    list_to_set(Csb, Csa).
+    list_to_set(Csb, Csa),
+    atualiza_casas_seguras_nao_visitadas(Csa).
 
-faz_casas_seguras(Posicao, _, _, Csa):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
-    Csa=[Posicao].
+faz_casas_seguras_nao_visitadas(Posicao, _, _):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
+    Csa=[Posicao],
+    atualiza_casas_seguras_nao_visitadas(Csa).
+
+atualiza_casas_seguras_nao_visitadas(Csa):- % Sempre recebe a variavel Csa para adicionar na lista Cs criando uma nova lista, atualizando a lista de casas seguras
+    casas_seguras_nao_visitadas(CasasSegurasNV),
+    casas_visitadas(CasasVisitadas),
+    append(Csa, CasasSegurasNV, NovaLista1),
+    list_to_set(NovaLista1, NovaLista2), %list_to_set para retirar casas repetidas da lista atualizada
+    subtract(NovaLista2, CasasVisitadas, NovaLista),
+    retractall(casas_seguras_nao_visitadas(_)),
+    assert(casas_seguras_nao_visitadas(NovaLista)).
+%------------------------------------------------------%
+%
+% Predicados para casas seguras
+faz_casas_seguras(Posicao, L, [no,no,_,_,_]):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
+    append([Posicao], L, Csb),
+    list_to_set(Csb, Csa),
+    atualiza_casas_seguras(Csa).
+
+faz_casas_seguras(Posicao, _, _):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
+    Csa=[Posicao],
+    atualiza_casas_seguras(Csa).
 
 atualiza_casas_seguras(Csa):- % Sempre recebe a variavel Csa para adicionar na lista Cs criando uma nova lista, atualizando a lista de casas seguras
     casas_seguras(CasasSeguras),
@@ -418,7 +391,7 @@ atualiza_casas_seguras(Csa):- % Sempre recebe a variavel Csa para adicionar na l
     subtract(NovaLista2, CasasVisitadas, NovaLista),
     retractall(casas_seguras(_)),
     assert(casas_seguras(NovaLista)).
-
+%---------------------------------------------------------%
 % Predicado para as casas visitadas
 faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
     casas_visitadas(Cv),
@@ -428,24 +401,19 @@ faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
     assert(casas_visitadas(NovaLista)).
 
 % Predicados para a casa anterior
-faz_casa_anterior(Casaanterior) :-    %regra para mudar casa anterior caso agente nao mude e casa
-    minhacasa([X,Y]),
-    casa_anterior([L,M]),
-    Y==M,
-    X==L,
+faz_casa_anterior :-    %regra para mudar casa anterior caso agente nao mude e casa
+    minhacasa(MinhaCasa),
     retractall(casa_anterior(_)),
-    assert(casa_anterior(Casaanterior)).
-
-faz_casa_anterior(_) :-  %regra pra que seja sempre verdade e acao seja retornada para o mundo%
-   true.
+    assert(casa_anterior(MinhaCasa)).
 
 % Predicados para as casas suspeitas
-faz_casas_suspeitas(L, CasasVisitadas, CasaSuspeitaInicial):- 
+faz_casas_suspeitas(L, CasasVisitadas):- 
     intersection(CasasVisitadas, L, L1), % Intersecao das casas visitadas com as casas adjacentes
-    subtract(L, L1, CasaSuspeitaInicial). % Subtrair a lista com as intersecoes da adjacente
+    subtract(L, L1, CasaSuspeitaInicial), % Subtrair a lista com as intersecoes da adjacente
+    atualiza_casas_suspeitas(CasaSuspeitaInicial).
 
 atualiza_casas_suspeitas(Casasuspeitainicial):-
-    casas_seguras(Casasseguras), % casas seguras atuais
+    casas_seguras_nao_visitadas(Casasseguras), % casas seguras atuais
     casas_suspeitas(Casassuspeitas), % casas suspeitas atuais
     append(Casasuspeitainicial, Casassuspeitas, NovaLista1), % adicionar a lista do predicado anterior na lista de casa suspeita atual
     list_to_set(NovaLista1, NovaLista), % retirar casas iguais

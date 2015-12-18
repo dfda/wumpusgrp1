@@ -41,7 +41,7 @@ init_agent :-
     assert(ouro(0)),                    % quantodade inicial de ouro
     assert(casas_seguras([])),          % lista inicial de casas seguras
     assert(casas_visitadas([[1,1]])),   % lista inicial de casas visitadas
-    assert(casa_anterior([1,1])),       % lista inicial de casa anterior
+    assert(casa_anterior([])),       % lista inicial de casa anterior
     assert(casas_suspeitas([])),        % lista inicial de casa suspeita
     assert(qtdacao(0)).                 % quantidade de acoes inicia 0
 
@@ -388,16 +388,10 @@ faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
     assert(casas_visitadas(NovaLista)).
 
 % Predicados para a casa anterior
-faz_casa_anterior(Casaanterior) :-    %regra para mudar casa anterior caso agente nao mude e casa
-    minhacasa([X,Y]),
-    casa_anterior([L,M]),
-    Y==M,
-    X==L,
+faz_casa_anterior :-    %regra para mudar casa anterior caso agente nao mude e casa
+    minhacasa(MinhaCasa),
     retractall(casa_anterior(_)),
-    assert(casa_anterior(Casaanterior)).
-
-faz_casa_anterior(_) :-  %regra pra que seja sempre verdade e acao seja retornada para o mundo%
-   true.
+    assert(casa_anterior(MinhaCasa)).
 
 % Predicados para as casas suspeitas
 faz_casas_suspeitas(L, CasasVisitadas, CasaSuspeitaInicial):- 

@@ -94,8 +94,7 @@ run_agent(Percepcao, Acao) :-
     write('Quantidade de acoes: '),
     writeln(Qda),
     estou_sentindo_uma_treta(Percepcao, Acao),
-    atualiza_quantidade_acao,
-    faz_casa_anterior(Casaanterior).           % Chamada para avaliar se casa anterior esta correta%
+    atualiza_quantidade_acao.
     
 % Fatos (acoes que vao ser executadas)
 % Percepcoes: [Fedor,Vento,Brilho,Trombada,Grito]
@@ -277,9 +276,7 @@ acao(Sentido1, Sentido2, turnleft):-
 % Calculacao sentido 0
 calculacao([X1, Y], 0, [X2, Y], goforward):-
     X1<X2,
-    minhacasa(MinhaCasa),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(MinhaCasa)),
+    faz_casa_anterior,
     novaposicao.
 
 calculacao([X1, Y], 0, [X2, Y], turnleft):-
@@ -297,9 +294,7 @@ calculacao([X, Y1], 0, [X, Y2], turnright):-
 % Calculacao sentido 90
 calculacao([X, Y1], 90, [X, Y2], goforward):-
     Y1<Y2,
-    minhacasa(MinhaCasa),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(MinhaCasa)),
+    faz_casa_anterior,
     novaposicao.
 
 calculacao([X, Y1], 90, [X, Y2], turnleft):-
@@ -321,9 +316,7 @@ calculacao([X1, Y], 180, [X2, Y], turnleft):-
 
 calculacao([X1, Y], 180, [X2, Y], goforward):-
     X1>X2,
-    minhacasa(MinhaCasa),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(MinhaCasa)),
+    faz_casa_anterior,
     novaposicao.
 
 calculacao([X, Y1], 180, [X, Y2], turnright):-
@@ -345,9 +338,7 @@ calculacao([X1, Y], 270, [X2, Y], turnright):-
 
 calculacao([X, Y1], 270, [X, Y2], goforward):-
     Y2<Y1,
-    minhacasa(MinhaCasa),
-    retractall(casa_anterior(_)),
-    assert(casa_anterior(MinhaCasa)),
+    faz_casa_anterior,
     novaposicao.
 
 calculacao([X, Y1], 270, [X, Y2], turnleft):-
@@ -360,7 +351,7 @@ tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     X1 is X-1,
     retractall(agente_flecha(_)),
     assert(agente_flecha(X1)).
-
+%-----------------------------------------------------%
 % Predicados para as casas seguras
 faz_casas_seguras(Posicao, L, [no,no,_,_,_], Csa):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
     append([Posicao], L, Csb),

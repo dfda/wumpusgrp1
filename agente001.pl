@@ -75,8 +75,7 @@ run_agent(Percepcao, Acao) :-
     casas_seguras(Casasseguras), % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras: '),
     writeln(Casasseguras),
-    faz_casas_suspeitas(L, Casasvisitadas, Casasuspeitainicial), % Chamada da funcao para casas suspeitas
-    atualiza_casas_suspeitas(Casasuspeitainicial),
+    faz_casas_suspeitas(L, Casasvisitadas), % Chamada da funcao para casas suspeitas
     casas_suspeitas(Casassuspeitas),
     write('Casas suspeitas: '),
     writeln(Casassuspeitas),
@@ -385,9 +384,10 @@ faz_casa_anterior :-    %regra para mudar casa anterior caso agente nao mude e c
     assert(casa_anterior(MinhaCasa)).
 
 % Predicados para as casas suspeitas
-faz_casas_suspeitas(L, CasasVisitadas, CasaSuspeitaInicial):- 
+faz_casas_suspeitas(L, CasasVisitadas):- 
     intersection(CasasVisitadas, L, L1), % Intersecao das casas visitadas com as casas adjacentes
-    subtract(L, L1, CasaSuspeitaInicial). % Subtrair a lista com as intersecoes da adjacente
+    subtract(L, L1, CasaSuspeitaInicial), % Subtrair a lista com as intersecoes da adjacente
+    atualiza_casas_suspeitas(CasaSuspeitaInicial).
 
 atualiza_casas_suspeitas(Casasuspeitainicial):-
     casas_seguras(Casasseguras), % casas seguras atuais

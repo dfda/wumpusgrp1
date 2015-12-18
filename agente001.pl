@@ -94,6 +94,7 @@ run_agent(Percepcao, Acao) :-
     write('Quantidade de acoes: '),
     writeln(Qda),
     estou_sentindo_uma_treta(Percepcao, Acao),
+    atualiza_quantidade_acao,
     faz_casa_anterior(Casaanterior).           % Chamada para avaliar se casa anterior esta correta%
     
 % Fatos (acoes que vao ser executadas)
@@ -101,16 +102,18 @@ run_agent(Percepcao, Acao) :-
 % Acoes: goforward, turnright, turnleft, grab, climb, shoot
 % Listas: casas_visitadas(Casasvisitadas), casas_seguras(Casasseguras), casas_suspeitas(Casassuspeitas)
 
-% grab (prioridade máxima do agente) [0]
-estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
-    retractall(ouro(_)),
-    assert(ouro(1)),
-    write('Estou com ouro !!!'),nl,
+atualiza_quantidade_acao:-
     qtdacao(Qda),
     Qda1 is Qda+1,
     retractall(qtdacao(_)),
     assert(qtdacao(Qda1)).
 
+% grab (prioridade máxima do agente) [0]
+estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber seu brilho%
+    retractall(ouro(_)),
+    assert(ouro(1)),
+    write('Estou com ouro !!!'),nl.
+    
 % shoot (prioridade) [1]
 estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
     agente_flecha(X), 
@@ -123,60 +126,36 @@ estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha fle
     casas_seguras(Casasseguras),
     append([Frente], Casasseguras, CasasSeg1),
     retractall(casas_seguras(_)),
-    assert(casas_seguras(CasasSeg1)),
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-    
+    assert(casas_seguras(CasasSeg1)).
+        
 estou_sentindo_uma_treta([yes,yes,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
     agente_flecha(X), 
     X>0, 
     wumpus(vivo), 
-    tiro,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-
+    tiro.
+    
 % climbs (prioridade) [2]
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
-    ouro(1),
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-
+    ouro(1).
+    
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1]
     minhacasa([1,1]), 
     adjacentes([1,1], L),  
     casas_suspeitas(CasasSuspeitas),
     L==CasasSuspeitas,
-    write('Eu nao vou morrer aqui, xau! '), nl,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-
+    write('Eu nao vou morrer aqui, xau! '), nl.
+    
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus    
     minhacasa([1,1]),
-    wumpus(morto),
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-
+    wumpus(morto).
+    
 estou_sentindo_uma_treta([_,_,_,_,_], climb):- %Agente sai da caverna caso todas as casas seguras tenham sido visitadas
     minhacasa([1,1]),
     casas_seguras(CasasSeguras),
     CasasSeguras==[],
-    write('Ja visitei todos os lugares seguros, vou nessa! '), nl,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
-
+    write('Ja visitei todos os lugares seguros, vou nessa! '), nl.
+   
 % wumpus dead (procedimentos)
 estou_sentindo_uma_treta([_,no,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
     retractall(wumpus(_)), 
@@ -206,28 +185,16 @@ estou_sentindo_uma_treta(_, Acao):- % Quando quantidade maxima de acoe e' maior 
     Qda>49,
     minhacasa(Posicao),
     orientacao(Sentido),
-    calculacao(Posicao, Sentido, [1,1], Acao),
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
+    calculacao(Posicao, Sentido, [1,1], Acao).
 
 estou_sentindo_uma_treta(_, Acao):- % Quando a lista de casas seguras e' vazia, o agente prioriza o retorno a casa [1,1]
     casas_seguras([]),
     minhacasa(Posicao),
     orientacao(Sentido),
-    calculacao(Posicao, Sentido, [1,1], Acao),
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
+    calculacao(Posicao, Sentido, [1,1], Acao).
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
-    novosentidoleft,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
+    novosentidoleft.
 
 % Acoes para o agente visitar casas seguras
 estou_sentindo_uma_treta(_, Acao):-
@@ -262,6 +229,7 @@ estou_sentindo_uma_treta(_, Acao):-
     member(Frente, CasasSeguras),
     acao(Sentido, 270, Acao).
 
+%-----------------------------------------------------------------------------------------------%
 % Acoes para o agente voltar pelas casas visitadas
 estou_sentindo_uma_treta(_, Acao):-
     casas_visitadas(CasasVisitadas),
@@ -299,20 +267,12 @@ estou_sentindo_uma_treta(_, Acao):-
 acao(Sentido1, Sentido2, Acao):-
     Sentido1==Sentido2,
     Acao=goforward,
-    novaposicao,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
+    novaposicao.
 
 acao(Sentido1, Sentido2, Acao):-
     Sentido1\==Sentido2,
     Acao=turnleft,
-    novosentidoleft,
-    qtdacao(Qda),
-    Qda1 is Qda+1,
-    retractall(qtdacao(_)),
-    assert(qtdacao(Qda1)).
+    novosentidoleft.
 
 % Funcoes
 % Calculacao sentido 0

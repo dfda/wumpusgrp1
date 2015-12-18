@@ -74,6 +74,7 @@ run_agent(Percepcao, Acao) :-
     casas_visitadas(Casasvisitadas),
     write('Casas visitadas: '),
     writeln(Casasvisitadas),
+    faz_casas_seguras(Posicao, L, Percepcao),
     faz_casas_seguras_nao_visitadas(Posicao, L, Percepcao),  % Chamada para criar casas seguras
     casas_seguras_nao_visitadas(CasasSegurasNV), % Chamada da funcao casa segura, dependendo da percepcao do agente
     write('Casas seguras nao visitadas: '),
@@ -385,12 +386,13 @@ faz_casas_seguras(Posicao, _, _):- % Caso o agente sinta algo, a lista de casas_
 
 atualiza_casas_seguras(Csa):- % Sempre recebe a variavel Csa para adicionar na lista Cs criando uma nova lista, atualizando a lista de casas seguras
     casas_seguras(CasasSeguras),
-    casas_visitadas(CasasVisitadas),
     append(Csa, CasasSeguras, NovaLista1),
-    list_to_set(NovaLista1, NovaLista2), %list_to_set para retirar casas repetidas da lista atualizada
-    subtract(NovaLista2, CasasVisitadas, NovaLista),
+    list_to_set(NovaLista1, NovaLista), %list_to_set para retirar casas repetidas da lista atualizada
     retractall(casas_seguras(_)),
-    assert(casas_seguras(NovaLista)).
+    assert(casas_seguras(NovaLista)),
+    write('Casas Seguras: '),
+    writeln(NovaLista).
+
 %---------------------------------------------------------%
 % Predicado para as casas visitadas
 faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%

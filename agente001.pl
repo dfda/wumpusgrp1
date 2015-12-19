@@ -468,6 +468,12 @@ faz_casas_seguras(Posicao, L, [no,no,_,_,_]):- %casas que sao seguras, com base 
     list_to_set(Csb, Csa),
     atualiza_casas_seguras(Csa).
 
+faz_casas_seguras(Posicao, L, [yes,no,_,_,_]):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
+    wumpus(morto),
+    append([Posicao], L, Csb),
+    list_to_set(Csb, Csa),
+    atualiza_casas_seguras(Csa).
+
 faz_casas_seguras(Posicao, _, _):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
     Csa=[Posicao],
     atualiza_casas_seguras(Csa).

@@ -278,6 +278,11 @@ acao(Sentido1, Sentido2, turnleft):-
 % Calculacao sentido 0
 calculacao([X1, Y], 0, [X2, Y], goforward):-
     X1<X2,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 0, Frente),
+    member(Frente, CasasSeguras),
     faz_casa_anterior,
     novaposicao.
 
@@ -301,6 +306,11 @@ calculacao([X1, Y1], 0, [X2, Y2], turnright):-
 calculacao([X1, Y1], 0, [X2, Y2], goforward):-
     X1<X2,
     Y1>Y2,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 0, Frente),
+    member(Frente, CasasSeguras),
     faz_casa_anterior,
     novaposicao.
 
@@ -312,12 +322,22 @@ calculacao([X1, Y1], 0, [X2, Y2], turnleft):-
 calculacao([X1, Y1], 0, [X2, Y2], goforward):-
     X1<X2,
     Y1<Y2,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 0, Frente),
+    member(Frente, CasasSeguras),
     faz_casa_anterior,
     novaposicao.
 
 % Calculacao sentido 90
 calculacao([X, Y1], 90, [X, Y2], goforward):-
     Y1<Y2,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 90, Frente),
+    member(Frente, CasasSeguras),
     faz_casa_anterior,
     novaposicao.
 
@@ -346,12 +366,22 @@ calculacao([X1, Y1], 90, [X2, Y2], turnright):-
 calculacao([X1, Y1], 90, [X2, Y2], goforward):-
     X1>X2,
     Y1<Y2,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 90, Frente),
+    member(Frente, CasasSeguras),
     faz_casa_anterior,
     novaposicao.
 
 calculacao([X1, Y1], 90, [X2, Y2], goforward):-
     X1<X2,
     Y1<Y2,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 90, Frente),
+    member(Frente, CasasSeguras),
     faz_casa_anterior,
     novaposicao.
 
@@ -362,6 +392,11 @@ calculacao([X1, Y], 180, [X2, Y], turnleft):-
 
 calculacao([X1, Y], 180, [X2, Y], goforward):-
     X1>X2,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 180, Frente),
+    member(Frente, CasasSeguras),
     faz_casa_anterior,
     novaposicao.
 
@@ -376,6 +411,11 @@ calculacao([X, Y1], 180, [X, Y2], turnleft):-
 calculacao([X1, Y1], 180, [X2, Y2], goforward):-
     X1>X2,
     Y1<Y2,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 180, Frente),
+    member(Frente, CasasSeguras),
     faz_casa_anterior,
     novaposicao.
 
@@ -392,6 +432,11 @@ calculacao([X1, Y1], 180, [X2, Y2], turnright):-
 calculacao([X1, Y1], 180, [X2, Y2], goforward):-
     X1>X2,
     Y1>Y2,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 180, Frente),
+    member(Frente, CasasSeguras),
     faz_casa_anterior,
     novaposicao.
 
@@ -406,6 +451,11 @@ calculacao([X1, Y], 270, [X2, Y], turnright):-
 
 calculacao([X, Y1], 270, [X, Y2], goforward):-
     Y2<Y1,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 270, Frente),
+    member(Frente, CasasSeguras),
     faz_casa_anterior,
     novaposicao.
 
@@ -417,12 +467,22 @@ calculacao([X1, Y1], 270, [X2, Y2], goforward):-
     X1>X2,
     Y1>Y2,
     faz_casa_anterior,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 270, Frente),
+    member(Frente, CasasSeguras),
     novaposicao.
 
 calculacao([X1, Y1], 270, [X2, Y2], goforward):-
     X1<X2,
     Y1>Y2,
     faz_casa_anterior,
+    casas_seguras(CasasSeguras),
+    minhacasa(Posicao),
+    orientacao(Sentido),
+    faz_frente(Posicao, 270, Frente),
+    member(Frente, CasasSeguras),
     novaposicao.
 
 calculacao([X1, Y1], 270, [X2, Y2], turnleft):-

@@ -293,6 +293,28 @@ calculacao([X, Y1], 0, [X, Y2], turnright):-
     Y1>Y2,
     novosentidoright.
 
+calculacao([X1, Y1], 0, [X2, Y2], turnright):-
+    X1>X2,
+    Y1>Y2,
+    novosentidoright.
+
+calculacao([X1, Y1], 0, [X2, Y2], goforward):-
+    X1<X2,
+    Y1>Y2,
+    faz_casa_anterior,
+    novaposicao.
+
+calculacao([X1, Y1], 0, [X2, Y2], turnleft):-
+    X1>X2,
+    Y1<Y2,
+    novosentidoleft.
+
+calculacao([X1, Y1], 0, [X2, Y2], goforward):-
+    X1<X2,
+    Y1<Y2,
+    faz_casa_anterior,
+    novaposicao.
+
 % Calculacao sentido 90
 calculacao([X, Y1], 90, [X, Y2], goforward):-
     Y1<Y2,

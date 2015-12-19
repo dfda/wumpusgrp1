@@ -515,8 +515,9 @@ atualiza_casas_seguras_nao_visitadas(Csa):- % Sempre recebe a variavel Csa para 
     append(Csa, CasasSegurasNV, NovaLista1),
     list_to_set(NovaLista1, NovaLista2), %list_to_set para retirar casas repetidas da lista atualizada
     subtract(NovaLista2, CasasVisitadas, NovaLista),
+    subtract(NovaLista, [[0,_],[_,0],[5,_],[_,5]], ListaF),
     retractall(casas_seguras_nao_visitadas(_)),
-    assert(casas_seguras_nao_visitadas(NovaLista)).
+    assert(casas_seguras_nao_visitadas(ListaF)).
 %------------------------------------------------------%
 % Predicados para casas seguras
 faz_casas_seguras(Posicao, L, [no,no,_,_,_]):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%

@@ -373,7 +373,7 @@ calculacao([X, Y1], 180, [X, Y2], turnleft):-
     Y1>Y2,
     novosentidoleft.
 
-calculacao([X1, Y2], 180, [X2, Y2], goforward):-
+calculacao([X1, Y1], 180, [X2, Y2], goforward):-
     X1>X2,
     Y1<Y2,
     faz_casa_anterior,
@@ -389,7 +389,7 @@ calculacao([X1, Y1], 180, [X2, Y2], turnright):-
     Y1<Y2,
     novosentidoright.
 
-calculacao([X1, Y2], 180, [X2, Y2], goforward):-
+calculacao([X1, Y1], 180, [X2, Y2], goforward):-
     X1>X2,
     Y1>Y2,
     faz_casa_anterior,

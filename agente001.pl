@@ -275,6 +275,7 @@ acao(Sentido1, Sentido2, turnleft):-
     novosentidoleft.
 
 % Funcoes
+%-----------------------------------------------------%
 % Calculacao sentido 0
 calculacao([X1, Y], 0, [X2, Y], goforward):-
     X1<X2,
@@ -521,7 +522,6 @@ atualiza_casas_seguras_nao_visitadas(Csa):- % Sempre recebe a variavel Csa para 
     retractall(casas_seguras_nao_visitadas(_)),
     assert(casas_seguras_nao_visitadas(NovaLista)).
 %------------------------------------------------------%
-%
 % Predicados para casas seguras
 faz_casas_seguras(Posicao, L, [no,no,_,_,_]):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
     append([Posicao], L, Csb),
@@ -546,7 +546,6 @@ atualiza_casas_seguras(Csa):- % Sempre recebe a variavel Csa para adicionar na l
     assert(casas_seguras(NovaLista)),
     write('Casas Seguras: '),
     writeln(NovaLista).
-
 %---------------------------------------------------------%
 % Predicado para as casas visitadas
 faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
@@ -576,7 +575,7 @@ atualiza_casas_suspeitas(Casasuspeitainicial):-
     subtract(NovaLista, Casasseguras, NovaLista2), % retirar as casas seguras da lista
     retractall(casas_suspeitas(_)),
     assert(casas_suspeitas(NovaLista2)). % atualizar a lista
-
+%-----------------------------------------------------%
 % Predicados para a casa da frente
 %faz_frente([4, Y], 0, [4, Y]).      % casa da extremidade, a casa da frente e' a mesma casa que o agente esta
     
@@ -597,7 +596,7 @@ faz_frente([X, Y], 180, [X1, Y]):-   % caso a orientacao do agente seja 180, a c
     
 faz_frente([X, Y], 270, [X, Y1]):-   % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
     Y1 is Y - 1.
-
+%-----------------------------------------------------%
 % Predicado para orientacao do agente
 novosentidoleft:- % muda a memoria do sentido atual caso aconteca um turnleft
     orientacao(Sentido),
@@ -610,7 +609,7 @@ novosentidoright:- % muda a memoria do sentido atual caso aconteca um turnright
     Novosentido is (Sentido-90) mod 360,
     retractall(orientacao(_)),
     assert(orientacao(Novosentido)).
-
+%-----------------------------------------------------%
 % Predicados para atualizar a posicao atual do agente
 novaposicao:- 
     orientacao(0),
@@ -675,7 +674,7 @@ novaposicao:-
     Y1 is Y,
     retractall(minhacasa([_,_])),
     assert(minhacasa([X,Y1])).
-
+%-----------------------------------------------------%
 % Predicados para as casas adjacentes
 % A regra chamara outras regrar para somar e diminuir cara coordenada
 adjacentes([X, Y], L):-
@@ -752,7 +751,7 @@ adjacentes([X, Y], L):-
     esquerda([X, Y], L3),
     baixo([X, Y], L2),
     L=[L1, L2, L3].
-
+%-----------------------------------------------------%
 % Funcoes para calcular as coordenadas das casas adjacentes
 cima([X, Y], L1):-
     Y1 is Y + 1,

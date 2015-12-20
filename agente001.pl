@@ -153,7 +153,7 @@ estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso possua ouro e e
 estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1]
     minhacasa([1,1]), 
     adjacentes([1,1], L),  
-    caisas_suspeitas(CasasSuspeitas),
+    casas_suspeitas(CasasSuspeitas),
     L==CasasSuspeitas,
     write('Eu nao vou morrer aqui, xau! '), nl.
     

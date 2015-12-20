@@ -53,43 +53,38 @@ restart_agent :-
 
 run_agent(Percepcao, Acao) :-
     nl,
+    write('Informacoes do agente'),
+    % Fatos %
+    minhacasa(Posicao), % Chamada da funcao minhacasa para saber a posicao atual
+    orientacao(Sentido), % Chamada da funcao orientacao para saber a orientacao atual do agente
+    ouro(Quantidade), % Chamada para recolher quantidade do ouro 
+    agente_flecha(Flecha), % Chamada para recolher o valor da variavel Flecha
+    casa_anterior(Casaanterior), % Chamada para saber casa anterior 
+    wumpus(Estado),
+    % Predicados %
+    adjacentes(Posicao, L), % Chamada da funcao adjacente para obter uma lista de casas adjacentes
+    faz_casas_visitadas, % Chamada para criar casas visitadas
+    faz_casas_seguras(Percepcao), % Chamada para criar as casas seguras
+    faz_casas_seguras_nao_visitadas,  % Chamada para criar casas seguras nao visitadas
+    faz_casas_suspeitas(Percepcao), % Chamada da funcao para casas suspeitas
+    faz_frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
+    % Impressao %
     write('Percebi: '), 
     writeln(Percepcao),
-    minhacasa(Posicao), % Chamada da funcao minhacasa para saber a posicao atual
     write('Minha posicao: '),
     writeln(Posicao),
-    adjacentes(Posicao, L), % Chamada da funcao adjacente para obter uma lista de casas adjacentes
     write('Casas adjacentes: '),
     writeln(L),
-    orientacao(Sentido), % Chamada da funcao orientacao para saber a orientacao atual do agente
     write('Sentido do agente: '),
     writeln(Sentido),
-    faz_frente(Posicao, Sentido, Frente), % Chamada da funcao frente para saber a casa a frente do agente
     write('Casa da frente: '),
     writeln(Frente),
-    casa_anterior(Casaanterior), % Chamada para saber casa anterior 
     write('Casa anterior: '),
     writeln(Casaanterior),
-    faz_casas_visitadas(Posicao), % Chamada para criar casas visitadas
-    casas_visitadas(Casasvisitadas),
-    write('Casas visitadas: '),
-    writeln(Casasvisitadas),
-    faz_casas_seguras(Posicao, L, Percepcao),
-    faz_casas_seguras_nao_visitadas(Posicao, L, Percepcao),  % Chamada para criar casas seguras
-    casas_seguras_nao_visitadas(CasasSegurasNV), % Chamada da funcao casa segura, dependendo da percepcao do agente
-    write('Casas seguras nao visitadas: '),
-    writeln(CasasSegurasNV),
-    faz_casas_suspeitas(L, Casasvisitadas), % Chamada da funcao para casas suspeitas
-    casas_suspeitas(Casassuspeitas),
-    write('Casas suspeitas: '),
-    writeln(Casassuspeitas),
-    agente_flecha(Flecha), % Chamada para recolher o valor da variavel Flecha
     write('Numero de flechas: '), 
     writeln(Flecha),
-    ouro(Quantidade), % Chamada para recolher quantidade do ouro 
     write('Quantidade de ouro: '),
     writeln(Quantidade),
-    wumpus(Estado),
     write('Estado do Wumpus: '), % Chamada para recolher estado do wumpus
     writeln(Estado),
     qtdacao(Qda), % Chamada do fato dinamico quantidade de acoes
@@ -116,7 +111,7 @@ estou_sentindo_uma_treta([_,_,yes,_,_],  grab):- %agente coleta ouro ao perceber
     write('Estou com ouro !!!'),nl.
     
 % shoot (prioridade) [1]
-estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
+estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha flecha, sinta o cheiro e wumpus vivo%
     agente_flecha(X), 
     X>0, 
     wumpus(vivo), 
@@ -133,15 +128,14 @@ estou_sentindo_uma_treta([yes,no,_,_,_], shoot) :-  %agente atira caso tenha fle
     retractall(casas_seguras(_)),
     assert(casas_seguras(CasasSeg)).
         
-estou_sentindo_uma_treta([yes,yes,_,_,_], shoot) :-  %agente atira caso tenha flecha e wumpus esteja vivo%
+estou_sentindo_uma_treta([yes,yes,_,_,_], shoot) :-  %agente atira caso tenha flecha, sinta cheiro e brisa e wumpus vivo
     agente_flecha(X), 
     X>0, 
     wumpus(vivo), 
     tiro.
     
 % climbs (prioridade) [2]
-
-estou_sentindo_uma_treta(_, climb):-
+estou_sentindo_uma_treta(_, climb):- % Passou da quantidade de acoe? Sai da caverna logo
     qtdacao(Qda),
     Qda>49,
     minhacasa([1,1]).
@@ -157,7 +151,7 @@ estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso todas as casas 
     L==CasasSuspeitas,
     write('Eu nao vou morrer aqui, xau! '), nl.
     
-estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus    
+estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso esteja na casa [1,1] e tenha matado o wumpus e visitou todas as casas seguras nao visitdas
     minhacasa([1,1]),
     casas_seguras_nao_visitadas([]),
     wumpus(morto).
@@ -168,7 +162,7 @@ estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso todas as casas 
     write('Ja visitei todos os lugares seguros, vou nessa!'), nl.
    
 % wumpus dead (procedimentos)
-estou_sentindo_uma_treta([_,no,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito%
+estou_sentindo_uma_treta([_,no,_,_,yes], _):- %Wumpus morto apos agente ouvir o grito, atualiza lista de casas segura, casas nao visitadas e suspeitas
     retractall(wumpus(_)), 
     assert(wumpus(morto)),
     minhacasa(Posicao),
@@ -210,7 +204,7 @@ estou_sentindo_uma_treta(_, Acao):- % Quando a lista de casas seguras e' vazia, 
 
 estou_sentindo_uma_treta([_,_,no,yes,no], turnleft):-    %fazer agente virar para esquerda ao sentir trombada
     novosentidoleft.
-
+%-----------------------------------------------------------------------------------------------%
 % Acoes para o agente visitar casas seguras
 estou_sentindo_uma_treta(_, Acao):-
     casas_seguras_nao_visitadas(CasasSegurasNV),
@@ -244,7 +238,6 @@ estou_sentindo_uma_treta(_, Acao):-
     member(Frente, CasasSegurasNV),
     acao(Sentido, 270, Acao).
 
-%-----------------------------------------------------------------------------------------------%
 % Acoes para o agente voltar pelas casas visitadas
 estou_sentindo_uma_treta(_, Acao):-
     casas_visitadas(CasasVisitadas),
@@ -505,39 +498,24 @@ tiro :-  %agente com flecha e capaz de atirar no wumpus e flecha e decrementada%
     retractall(agente_flecha(_)),
     assert(agente_flecha(X1)).
 %-----------------------------------------------------%
-% Predicados para as casas seguras
-faz_casas_seguras_nao_visitadas(Posicao, L, [no,no,_,_,_]):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
-    append([Posicao], L, Csb),
-    list_to_set(Csb, Csa),
-    atualiza_casas_seguras_nao_visitadas(Csa).
-
-faz_casas_seguras_nao_visitadas(Posicao, _, _):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
-    Csa=[Posicao],
-    atualiza_casas_seguras_nao_visitadas(Csa).
-
-atualiza_casas_seguras_nao_visitadas(Csa):- % Sempre recebe a variavel Csa para adicionar na lista Cs criando uma nova lista, atualizando a lista de casas seguras
-    casas_seguras_nao_visitadas(CasasSegurasNV),
-    casas_visitadas(CasasVisitadas),
-    append(Csa, CasasSegurasNV, NovaLista1),
-    list_to_set(NovaLista1, NovaLista2), %list_to_set para retirar casas repetidas da lista atualizada
-    subtract(NovaLista2, CasasVisitadas, NovaLista),
-    subtract(NovaLista, [[0,_],[_,0],[5,_],[_,5]], ListaF),
-    retractall(casas_seguras_nao_visitadas(_)),
-    assert(casas_seguras_nao_visitadas(ListaF)).
-%------------------------------------------------------%
 % Predicados para casas seguras
-faz_casas_seguras(Posicao, L, [no,no,_,_,_]):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
+faz_casas_seguras([no,no,_,_,_]):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
+    minhacasa(Posicao),
+    adjacentes(Posicao, L),
     append([Posicao], L, Csb),
     list_to_set(Csb, Csa),
     atualiza_casas_seguras(Csa).
 
-faz_casas_seguras(Posicao, L, [yes,no,_,_,_]):- %casas que sao seguras, com base em casas adjacentes e minha posicao atual%
+faz_casas_seguras([yes,no,_,_,_]):- %casas que sao seguras, caso wumpus morto, com base em casas adjacentes e minha posicao atual
+    minhacasa(Posicao),
+    adjacentes(Posicao, L),
     wumpus(morto),
     append([Posicao], L, Csb),
     list_to_set(Csb, Csa),
     atualiza_casas_seguras(Csa).
 
-faz_casas_seguras(Posicao, _, _):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
+faz_casas_seguras(_):- % Caso o agente sinta algo, a lista de casas_seguras adiciona a casa da posicao atual do agente
+    minhacasa(Posicao),
     Csa=[Posicao],
     atualiza_casas_seguras(Csa).
 
@@ -547,56 +525,91 @@ atualiza_casas_seguras(Csa):- % Sempre recebe a variavel Csa para adicionar na l
     list_to_set(NovaLista1, NovaLista), %list_to_set para retirar casas repetidas da lista atualizada
     retractall(casas_seguras(_)),
     assert(casas_seguras(NovaLista)),
-    write('Casas Seguras: '),
+    write('Casas seguras: '),
     writeln(NovaLista).
 %---------------------------------------------------------%
 % Predicado para as casas visitadas
-faz_casas_visitadas(Posicao) :-  %regra para salvar casas visitadas%
+faz_casas_visitadas:-  %regra para salvar casas visitadas%
+    minhacasa(Posicao),
     casas_visitadas(Cv),
     append([Posicao], Cv, NovaLista1),
     list_to_set(NovaLista1, NovaLista),
     retractall(casas_visitadas(_)),
-    assert(casas_visitadas(NovaLista)).
-
+    assert(casas_visitadas(NovaLista)),
+    write('Casas visitadas1: '),
+    writeln(NovaLista).
+%---------------------------------------------------------%
+%% Predicados para as casas seguras nao visitados
+faz_casas_seguras_nao_visitadas:-
+    casas_seguras(CasasSeguras),
+    casas_visitadas(CasasVisitadas),
+    subtract(CasasSeguras, CasasVisitadas, CasasSegurasNV1),
+    subtract(CasasSegurasNV1, [[0,_],[_,0],[5,_],[_,5]], CasasSegurasNV),
+    retractall(casas_seguras_nao_visitadas(_)),
+    assert(casas_seguras_nao_visitadas(CasasSegurasNV)),
+    write('Casas seguras nao visitadas1: '),
+    writeln(CasasSegurasNV).
+%------------------------------------------------------%
 % Predicados para a casa anterior
 faz_casa_anterior :-    %regra para mudar casa anterior caso agente nao mude e casa
     minhacasa(MinhaCasa),
     retractall(casa_anterior(_)),
     assert(casa_anterior(MinhaCasa)).
-
+%---------------------------------------------------------%
 % Predicados para as casas suspeitas
-faz_casas_suspeitas(L, CasasVisitadas):- 
+faz_casas_suspeitas([yes,no|_]):-
+    minhacasa(Posicao),
+    adjacentes(Posicao, L),
+    casas_visitadas(CasasVisitadas),
     intersection(CasasVisitadas, L, L1), % Intersecao das casas visitadas com as casas adjacentes
     subtract(L, L1, CasaSuspeitaInicial), % Subtrair a lista com as intersecoes da adjacente
     atualiza_casas_suspeitas(CasaSuspeitaInicial).
 
+faz_casas_suspeitas([no,yes|_]):-
+    minhacasa(Posicao),
+    adjacentes(Posicao, L),
+    casas_visitadas(CasasVisitadas),
+    intersection(CasasVisitadas, L, L1), % Intersecao das casas visitadas com as casas adjacentes
+    subtract(L, L1, CasaSuspeitaInicial), % Subtrair a lista com as intersecoes da adjacente
+    atualiza_casas_suspeitas(CasaSuspeitaInicial).
+
+faz_casas_suspeitas([yes,yes|_]):-
+    minhacasa(Posicao),
+    adjacentes(Posicao, L),
+    casas_visitadas(CasasVisitadas),
+    intersection(CasasVisitadas, L, L1), % Intersecao das casas visitadas com as casas adjacentes
+    subtract(L, L1, CasaSuspeitaInicial), % Subtrair a lista com as intersecoes da adjacente
+    atualiza_casas_suspeitas(CasaSuspeitaInicial).
+
+faz_casas_suspeitas([no,no|_]):-
+    casas_suspeitas(CasasSuspeitas),
+    write('Casas suspeitas: '),
+    writeln(CasasSuspeitas),
+    true.
+
 atualiza_casas_suspeitas(Casasuspeitainicial):-
-    casas_seguras_nao_visitadas(Casasseguras), % casas seguras atuais
+    casas_seguras(Casasseguras), % casas seguras atuais
     casas_suspeitas(Casassuspeitas), % casas suspeitas atuais
     append(Casasuspeitainicial, Casassuspeitas, NovaLista1), % adicionar a lista do predicado anterior na lista de casa suspeita atual
     list_to_set(NovaLista1, NovaLista), % retirar casas iguais
     subtract(NovaLista, Casasseguras, NovaLista2), % retirar as casas seguras da lista
     retractall(casas_suspeitas(_)),
-    assert(casas_suspeitas(NovaLista2)). % atualizar a lista
+    assert(casas_suspeitas(NovaLista2)), % atualizar a lista
+    write('Casas suspeitas: '),
+    writeln(NovaLista2).
+   
 %-----------------------------------------------------%
 % Predicados para a casa da frente
-%faz_frente([4, Y], 0, [4, Y]).      % casa da extremidade, a casa da frente e' a mesma casa que o agente esta
     
 faz_frente([X, Y], 0, [X1, Y]):-   % caso a orientacao do agente seja 0, a casa da frente sera com o 1o elemento da lista mais 1
     X1 is X + 1.
-
-%faz_frente([X, 4], 90, [X, 4]).     % caso da extremidade, a casa da frente e' a mesma casa que o agente esta
     
 faz_frente([X, Y], 90, [X, Y1]):-   % caso a orientacao do agente seja 90, a casa da frente sera com o 2o elemento da lista mais 1
     Y1 is Y + 1.
 
-%faz_frente([1, Y], 180, [1, Y]).    % casa invalida, permanece a casa atual como casa da frente
-    
 faz_frente([X, Y], 180, [X1, Y]):-   % caso a orientacao do agente seja 180, a casa da frente sera com o 1o elemento da lista menos 1
     X1 is X - 1.
 
-%faz_frente([X, 1], 270, [X, 1]).    % casa invalida, permanece a casa atual como casa da frente
-    
 faz_frente([X, Y], 270, [X, Y1]):-   % caso a orientacao do agente seja 270, a casa da frente sera com o 2o elemento da lista mais 1
     Y1 is Y - 1.
 %-----------------------------------------------------%
@@ -619,7 +632,7 @@ novaposicao:-
     minhacasa([X,Y]),
     X<4,
     X1 is X+1,   
-    retractall(minhacasa([_|_])),
+    retractall(minhacasa(_)),
     assert(minhacasa([X1,Y])).
 
 novaposicao:- 
@@ -627,7 +640,7 @@ novaposicao:-
     minhacasa([X,Y]),
     X==4,
     X1 is X,  
-    retractall(minhacasa([_,_])),
+    retractall(minhacasa(_)),
     assert(minhacasa([X1,Y])).
 
 novaposicao:-
@@ -635,7 +648,7 @@ novaposicao:-
     minhacasa([X,Y]),
     Y<4,
     Y1 is Y+1, 
-    retractall(minhacasa([_,_])),
+    retractall(minhacasa(_)),
     assert(minhacasa([X,Y1])).
 
 novaposicao:-
@@ -643,7 +656,7 @@ novaposicao:-
     minhacasa([X,Y]),
     Y==4,
     Y1 is Y, 
-    retractall(minhacasa([_,_])),
+    retractall(minhacasa(_)),
     assert(minhacasa([X,Y1])).
 
 novaposicao:-
@@ -651,7 +664,7 @@ novaposicao:-
     minhacasa([X,Y]),
     X>1,
     X1 is X-1,
-    retractall(minhacasa([_,_])),
+    retractall(minhacasa(_)),
     assert(minhacasa([X1,Y])).
 
 novaposicao:-
@@ -659,7 +672,7 @@ novaposicao:-
     minhacasa([X,Y]),
     X==1,
     X1 is X,
-    retractall(minhacasa([_,_])),
+    retractall(minhacasa(_)),
     assert(minhacasa([X1,Y])).
 
 novaposicao:-
@@ -667,7 +680,7 @@ novaposicao:-
     minhacasa([X,Y]),
     Y>1,
     Y1 is Y-1,
-    retractall(minhacasa([_,_])),
+    retractall(minhacasa(_)),
     assert(minhacasa([X,Y1])).
 
 novaposicao:-
@@ -675,7 +688,7 @@ novaposicao:-
     minhacasa([X,Y]), 
     Y==1,
     Y1 is Y,
-    retractall(minhacasa([_,_])),
+    retractall(minhacasa(_)),
     assert(minhacasa([X,Y1])).
 %-----------------------------------------------------%
 % Predicados para as casas adjacentes
@@ -756,19 +769,15 @@ adjacentes([X, Y], L):-
     L=[L1, L2, L3].
 %-----------------------------------------------------%
 % Funcoes para calcular as coordenadas das casas adjacentes
-cima([X, Y], L1):-
-    Y1 is Y + 1,
-    L1=[X, Y1].
+cima([X, Y], [X, Y1]):-
+    Y1 is Y + 1.
 
-baixo([X, Y], L2):-
-    Y2 is Y - 1,
-    L2=[X, Y2].
+baixo([X, Y], [X, Y2]):-
+    Y2 is Y - 1.
 
-esquerda([X, Y], L3):-
-    X2 is X - 1,
-    L3=[X2, Y].
+esquerda([X, Y], [X2, Y]):-
+    X2 is X - 1.
 
-direita([X, Y], L4):-
-    X1 is X + 1,
-    L4=[X1, Y].
+direita([X, Y], [X1, Y]):-
+    X1 is X + 1.
 

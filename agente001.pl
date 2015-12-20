@@ -140,6 +140,12 @@ estou_sentindo_uma_treta([yes,yes,_,_,_], shoot) :-  %agente atira caso tenha fl
     tiro.
     
 % climbs (prioridade) [2]
+
+estou_sentindo_uma_treta(_, climb):-
+    qtdacao(Qda),
+    Qda>49,
+    minhacasa([1,1]).
+
 estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso possua ouro e esteja na casa [1,1]
     minhacasa([1,1]),
     ouro(1).
@@ -147,7 +153,7 @@ estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso possua ouro e e
 estou_sentindo_uma_treta(_, climb):- %Agente sai da caverna caso todas as casas ao redor sejam perigosas e esteja na casa [1,1]
     minhacasa([1,1]), 
     adjacentes([1,1], L),  
-    casas_suspeitas(CasasSuspeitas),
+    caisas_suspeitas(CasasSuspeitas),
     L==CasasSuspeitas,
     write('Eu nao vou morrer aqui, xau! '), nl.
     
